@@ -1,0 +1,410 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1900" viewBox="0 0 2600 1900" role="img" aria-labelledby="title desc">
+  <title id="title">俺しか使わない家計簿 画面遷移図</title>
+  <desc id="desc">Next.jsのページ実装から抽出した、ログイン、トップ、出金、入金、資産残高、管理画面の画面遷移図です。</desc>
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#0f172a" flood-opacity=".12"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"/>
+    </marker>
+    <style>
+      text { font-family: "Noto Sans JP", "Yu Gothic", "Hiragino Sans", sans-serif; fill: #0f172a; }
+      .main-title { font-size: 42px; font-weight: 800; letter-spacing: .02em; fill: #fff; }
+      .subtitle { font-size: 19px; fill: #64748b; }
+      .header-subtitle { font-size: 19px; fill: #cbd5e1; }
+      .header-legend { font-size: 15px; fill: #e2e8f0; }
+      .section-title { font-size: 24px; font-weight: 800; }
+      .section-sub { font-size: 15px; fill: #64748b; }
+      .card { fill: #fff; stroke: #cbd5e1; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .card-title { font-size: 23px; font-weight: 800; }
+      .route { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 14px; fill: #64748b; }
+      .ui-label { font-size: 14px; fill: #475569; }
+      .button-text { font-size: 14px; font-weight: 700; fill: #fff; text-anchor: middle; dominant-baseline: middle; }
+      .button-dark-text { font-size: 14px; font-weight: 700; fill: #334155; text-anchor: middle; dominant-baseline: middle; }
+      .flow { fill: none; stroke: #475569; stroke-width: 3; marker-end: url(#arrow); }
+      .primary-flow { fill: none; stroke: #2563eb; stroke-width: 4; marker-end: url(#arrowBlue); }
+      .auth-flow { fill: none; stroke: #dc2626; stroke-width: 3; stroke-dasharray: 10 8; marker-end: url(#arrowRed); }
+      .back-flow { fill: none; stroke: #94a3b8; stroke-width: 2.5; stroke-dasharray: 7 7; marker-end: url(#arrow); }
+      .edge-label { font-size: 14px; font-weight: 700; fill: #334155; }
+      .note { font-size: 15px; fill: #475569; }
+      .legend { font-size: 15px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="2600" height="1900" fill="#f8fafc"/>
+  <rect x="0" y="0" width="2600" height="112" fill="#0f172a"/>
+  <text x="56" y="58" class="main-title">俺しか使わない家計簿｜画面遷移図</text>
+  <text x="58" y="91" class="header-subtitle">Next.js App Routerのページ・リンク・router.pushを基に作成（全17画面）</text>
+
+  <!-- Legend -->
+  <g transform="translate(1740 25)">
+    <path d="M0 15 H70" class="primary-flow"/>
+    <text x="86" y="21" class="header-legend">主要遷移</text>
+    <path d="M210 15 H280" class="back-flow"/>
+    <text x="296" y="21" class="header-legend">戻る</text>
+    <path d="M390 15 H460" class="auth-flow"/>
+    <text x="476" y="21" class="header-legend">認証遷移</text>
+  </g>
+
+  <!-- Authentication lane -->
+  <rect x="40" y="142" width="2520" height="266" rx="24" fill="#fff1f2" stroke="#fecdd3" stroke-width="2"/>
+  <text x="68" y="180" class="section-title" fill="#9f1239">認証・共通ナビゲーション</text>
+  <text x="68" y="205" class="section-sub">全ページはClientLayoutを使用。未認証時およびAPIの認証エラー時はログインへ遷移します。</text>
+
+  <!-- Login card -->
+  <g transform="translate(105 230)">
+    <rect width="360" height="145" class="card" stroke="#fda4af"/>
+    <circle cx="31" cy="31" r="13" fill="#e11d48"/>
+    <text x="56" y="38" class="card-title">ログイン</text>
+    <text x="22" y="65" class="route">/login</text>
+    <rect x="22" y="82" width="316" height="18" rx="5" fill="#f1f5f9"/>
+    <rect x="22" y="108" width="316" height="20" rx="7" fill="#2563eb"/>
+    <text x="180" y="118" class="button-text">ログイン</text>
+  </g>
+
+  <!-- Home card -->
+  <g transform="translate(1030 220)">
+    <rect width="460" height="165" class="card" stroke="#93c5fd"/>
+    <circle cx="31" cy="31" r="13" fill="#2563eb"/>
+    <text x="56" y="38" class="card-title">家計簿トップ</text>
+    <text x="22" y="65" class="route">/</text>
+    <rect x="22" y="82" width="196" height="26" rx="7" fill="#2563eb"/>
+    <rect x="242" y="82" width="196" height="26" rx="7" fill="#16a34a"/>
+    <rect x="22" y="119" width="196" height="26" rx="7" fill="#334155"/>
+    <rect x="242" y="119" width="196" height="26" rx="7" fill="#0891b2"/>
+    <text x="120" y="95" class="button-text">出金</text>
+    <text x="340" y="95" class="button-text">入金</text>
+    <text x="120" y="132" class="button-text">資産残高</text>
+    <text x="340" y="132" class="button-text">管理画面</text>
+  </g>
+
+  <path d="M465 298 H1010" class="primary-flow"/>
+  <rect x="660" y="277" width="154" height="27" rx="13" fill="#dbeafe"/>
+  <text x="737" y="296" class="edge-label" text-anchor="middle">ログイン成功</text>
+
+  <path d="M105 248 C55 248 55 367 105 367" class="auth-flow"/>
+  <text x="74" y="319" class="edge-label" fill="#be123c" text-anchor="middle">失敗</text>
+
+  <path d="M1505 278 H2380 V240" class="flow"/>
+  <g transform="translate(2120 228)">
+    <rect width="390" height="126" rx="18" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="22" y="34" class="card-title">共通ヘッダー</text>
+    <rect x="22" y="52" width="206" height="28" rx="7" fill="#e2e8f0"/>
+    <text x="125" y="66" class="button-dark-text">ロゴ → トップ</text>
+    <rect x="244" y="52" width="124" height="28" rx="7" fill="#dc2626"/>
+    <text x="306" y="66" class="button-text">ログアウト</text>
+    <text x="22" y="106" class="ui-label">ログアウト後 → /login</text>
+  </g>
+
+  <path d="M2120 340 H1900 V388 H465" class="auth-flow"/>
+  <rect x="1530" y="365" width="330" height="28" rx="14" fill="#ffe4e6"/>
+  <text x="1695" y="385" class="edge-label" fill="#be123c" text-anchor="middle">未認証・401・ログアウト</text>
+
+  <!-- Section backgrounds -->
+  <rect x="40" y="448" width="800" height="1312" rx="24" fill="#fff7ed" stroke="#fed7aa" stroke-width="2"/>
+  <rect x="865" y="448" width="800" height="1312" rx="24" fill="#f0fdf4" stroke="#bbf7d0" stroke-width="2"/>
+  <rect x="1690" y="448" width="870" height="1312" rx="24" fill="#eff6ff" stroke="#bfdbfe" stroke-width="2"/>
+
+  <text x="70" y="492" class="section-title" fill="#9a3412">出金</text>
+  <text x="70" y="519" class="section-sub">入力・一覧・カテゴリ集計・詳細・修正</text>
+  <text x="895" y="492" class="section-title" fill="#166534">入金</text>
+  <text x="895" y="519" class="section-sub">入力・一覧・詳細・修正</text>
+  <text x="1720" y="492" class="section-title" fill="#1e40af">資産残高・管理画面</text>
+  <text x="1720" y="519" class="section-sub">月次残高登録・一覧・集計ダッシュボード</text>
+
+  <!-- Home to section entry arrows -->
+  <path d="M1080 385 V430 H250 V550" class="primary-flow"/>
+  <text x="535" y="425" class="edge-label">「出金」</text>
+  <path d="M1190 385 V550" class="primary-flow"/>
+  <text x="1202" y="431" class="edge-label">「入金」</text>
+  <path d="M1320 385 V430 H1920 V550" class="primary-flow"/>
+  <text x="1582" y="425" class="edge-label">「資産残高」</text>
+  <path d="M1435 385 V416 H2320 V1260" class="primary-flow"/>
+  <text x="1900" y="411" class="edge-label">「管理画面」</text>
+
+  <!-- Expense menu -->
+  <g transform="translate(85 550)">
+    <rect width="340" height="174" class="card" stroke="#fdba74"/>
+    <circle cx="30" cy="31" r="13" fill="#ea580c"/>
+    <text x="55" y="38" class="card-title">出金メニュー</text>
+    <text x="22" y="65" class="route">/expenses</text>
+    <rect x="22" y="80" width="296" height="23" rx="7" fill="#2563eb"/>
+    <text x="170" y="92" class="button-text">出金入力</text>
+    <rect x="22" y="111" width="296" height="23" rx="7" fill="#16a34a"/>
+    <text x="170" y="123" class="button-text">出金一覧</text>
+    <rect x="22" y="142" width="296" height="23" rx="7" fill="#0891b2"/>
+    <text x="170" y="154" class="button-text">カテゴリ別一覧</text>
+  </g>
+
+  <!-- Expense create -->
+  <g transform="translate(85 800)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">出金入力</text>
+    <text x="22" y="65" class="route">/expenses/create</text>
+    <rect x="22" y="82" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="108" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="134" width="190" height="28" rx="7" fill="#16a34a"/>
+    <rect x="222" y="134" width="96" height="28" rx="7" fill="#64748b"/>
+    <text x="117" y="148" class="button-text">登録</text>
+    <text x="270" y="148" class="button-text">戻る</text>
+  </g>
+
+  <!-- Expense list -->
+  <g transform="translate(465 800)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">出金一覧</text>
+    <text x="22" y="65" class="route">/expenses/list?year=&amp;month=</text>
+    <rect x="22" y="82" width="80" height="17" rx="4" fill="#cbd5e1"/>
+    <rect x="112" y="82" width="96" height="17" rx="4" fill="#cbd5e1"/>
+    <rect x="218" y="82" width="100" height="17" rx="4" fill="#cbd5e1"/>
+    <rect x="22" y="111" width="296" height="34" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="36" y="133" class="ui-label">日付　カテゴリ　金額　［詳細］</text>
+    <rect x="22" y="154" width="140" height="20" rx="6" fill="#2563eb"/>
+    <rect x="174" y="154" width="144" height="20" rx="6" fill="#64748b"/>
+  </g>
+
+  <!-- Expense category summary -->
+  <g transform="translate(85 1080)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="35" class="card-title">出金一覧（カテゴリ別）</text>
+    <text x="22" y="62" class="route">/expenses/category-summary</text>
+    <circle cx="99" cy="120" r="42" fill="none" stroke="#fb923c" stroke-width="22" stroke-dasharray="130 264"/>
+    <circle cx="99" cy="120" r="42" fill="none" stroke="#facc15" stroke-width="22" stroke-dasharray="70 264" stroke-dashoffset="-130"/>
+    <circle cx="99" cy="120" r="42" fill="none" stroke="#60a5fa" stroke-width="22" stroke-dasharray="64 264" stroke-dashoffset="-200"/>
+    <rect x="174" y="86" width="144" height="13" rx="4" fill="#fed7aa"/>
+    <rect x="174" y="108" width="118" height="13" rx="4" fill="#fde68a"/>
+    <rect x="174" y="130" width="88" height="13" rx="4" fill="#bfdbfe"/>
+    <text x="174" y="166" class="ui-label">月指定 → 出金一覧</text>
+  </g>
+
+  <!-- Expense detail -->
+  <g transform="translate(465 1080)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">出金詳細</text>
+    <text x="22" y="65" class="route">/expenses/[id]</text>
+    <rect x="22" y="82" width="296" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="36" y="103" class="ui-label">日付・金額・カテゴリ・備考</text>
+    <rect x="22" y="143" width="138" height="27" rx="7" fill="#2563eb"/>
+    <rect x="180" y="143" width="138" height="27" rx="7" fill="#dc2626"/>
+    <text x="91" y="157" class="button-text">修正</text>
+    <text x="249" y="157" class="button-text">削除</text>
+  </g>
+
+  <!-- Expense edit -->
+  <g transform="translate(465 1380)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">出金修正</text>
+    <text x="22" y="65" class="route">/expenses/[id]/edit</text>
+    <rect x="22" y="82" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="108" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="139" width="190" height="28" rx="7" fill="#2563eb"/>
+    <rect x="222" y="139" width="96" height="28" rx="7" fill="#64748b"/>
+    <text x="117" y="153" class="button-text">更新</text>
+    <text x="270" y="153" class="button-text">戻る</text>
+  </g>
+
+  <!-- Expense flows -->
+  <path d="M255 724 V780" class="primary-flow"/>
+  <text x="268" y="758" class="edge-label">入力</text>
+  <path d="M425 637 H635 V780" class="primary-flow"/>
+  <text x="526" y="626" class="edge-label">一覧</text>
+  <path d="M85 637 H58 V1172 H75" class="primary-flow"/>
+  <text x="61" y="1002" class="edge-label" transform="rotate(-90 61 1002)">カテゴリ別</text>
+  <path d="M425 892 H455" class="primary-flow"/>
+  <rect x="392" y="858" width="96" height="25" rx="12" fill="#dbeafe"/>
+  <text x="440" y="876" class="edge-label" text-anchor="middle">登録成功</text>
+  <path d="M635 984 V1060" class="primary-flow"/>
+  <text x="648" y="1028" class="edge-label">詳細</text>
+  <path d="M425 1172 H455" class="primary-flow"/>
+  <text x="438" y="1159" class="edge-label" text-anchor="middle">月指定</text>
+  <path d="M635 1264 V1360" class="primary-flow"/>
+  <text x="648" y="1318" class="edge-label">修正</text>
+  <path d="M805 1465 H823 V905 H815" class="primary-flow"/>
+  <text x="819" y="1208" class="edge-label" transform="rotate(-90 819 1208)">更新成功</text>
+  <path d="M805 1155 H830 V930 H815" class="primary-flow"/>
+  <text x="826" y="1050" class="edge-label" transform="rotate(-90 826 1050)">削除成功</text>
+  <path d="M465 1518 H445 V1205 H455" class="back-flow"/>
+  <text x="449" y="1370" class="edge-label" transform="rotate(-90 449 1370)">キャンセル</text>
+
+  <!-- Income menu -->
+  <g transform="translate(910 550)">
+    <rect width="340" height="174" class="card" stroke="#86efac"/>
+    <circle cx="30" cy="31" r="13" fill="#16a34a"/>
+    <text x="55" y="38" class="card-title">入金メニュー</text>
+    <text x="22" y="65" class="route">/incomes</text>
+    <rect x="22" y="86" width="296" height="27" rx="7" fill="#2563eb"/>
+    <text x="170" y="100" class="button-text">入金入力</text>
+    <rect x="22" y="125" width="296" height="27" rx="7" fill="#16a34a"/>
+    <text x="170" y="139" class="button-text">入金一覧</text>
+  </g>
+
+  <!-- Income create -->
+  <g transform="translate(910 800)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">入金入力</text>
+    <text x="22" y="65" class="route">/incomes/create</text>
+    <rect x="22" y="82" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="108" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="139" width="190" height="28" rx="7" fill="#16a34a"/>
+    <rect x="222" y="139" width="96" height="28" rx="7" fill="#64748b"/>
+    <text x="117" y="153" class="button-text">登録</text>
+    <text x="270" y="153" class="button-text">戻る</text>
+  </g>
+
+  <!-- Income list -->
+  <g transform="translate(1290 800)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">入金一覧</text>
+    <text x="22" y="65" class="route">/incomes/list</text>
+    <rect x="22" y="82" width="128" height="17" rx="4" fill="#cbd5e1"/>
+    <rect x="160" y="82" width="158" height="17" rx="4" fill="#cbd5e1"/>
+    <rect x="22" y="111" width="296" height="34" rx="6" fill="#f1f5f9" stroke="#cbd5e1"/>
+    <text x="36" y="133" class="ui-label">日付　金額　備考　［詳細］</text>
+    <rect x="22" y="154" width="140" height="20" rx="6" fill="#2563eb"/>
+    <rect x="174" y="154" width="144" height="20" rx="6" fill="#64748b"/>
+  </g>
+
+  <!-- Income detail -->
+  <g transform="translate(1290 1080)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">入金詳細</text>
+    <text x="22" y="65" class="route">/incomes/[id]</text>
+    <rect x="22" y="82" width="296" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="36" y="103" class="ui-label">日付・金額・備考</text>
+    <rect x="22" y="143" width="138" height="27" rx="7" fill="#2563eb"/>
+    <rect x="180" y="143" width="138" height="27" rx="7" fill="#dc2626"/>
+    <text x="91" y="157" class="button-text">修正</text>
+    <text x="249" y="157" class="button-text">削除</text>
+  </g>
+
+  <!-- Income edit -->
+  <g transform="translate(1290 1380)">
+    <rect width="340" height="184" class="card"/>
+    <text x="22" y="38" class="card-title">入金修正</text>
+    <text x="22" y="65" class="route">/incomes/[id]/edit</text>
+    <rect x="22" y="82" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="108" width="296" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="139" width="190" height="28" rx="7" fill="#2563eb"/>
+    <rect x="222" y="139" width="96" height="28" rx="7" fill="#64748b"/>
+    <text x="117" y="153" class="button-text">更新</text>
+    <text x="270" y="153" class="button-text">戻る</text>
+  </g>
+
+  <!-- Income flows -->
+  <path d="M1080 724 V780" class="primary-flow"/>
+  <text x="1093" y="758" class="edge-label">入力</text>
+  <path d="M1250 637 H1460 V780" class="primary-flow"/>
+  <text x="1351" y="626" class="edge-label">一覧</text>
+  <path d="M1250 892 H1280" class="primary-flow"/>
+  <rect x="1217" y="858" width="96" height="25" rx="12" fill="#dbeafe"/>
+  <text x="1265" y="876" class="edge-label" text-anchor="middle">登録成功</text>
+  <path d="M1460 984 V1060" class="primary-flow"/>
+  <text x="1473" y="1028" class="edge-label">詳細</text>
+  <path d="M1460 1264 V1360" class="primary-flow"/>
+  <text x="1473" y="1318" class="edge-label">修正</text>
+  <path d="M1630 1465 H1648 V905 H1640" class="primary-flow"/>
+  <text x="1644" y="1208" class="edge-label" transform="rotate(-90 1644 1208)">更新成功</text>
+  <path d="M1630 1155 H1655 V930 H1640" class="primary-flow"/>
+  <text x="1651" y="1050" class="edge-label" transform="rotate(-90 1651 1050)">削除成功</text>
+  <path d="M1290 1518 H1270 V1205 H1280" class="back-flow"/>
+  <text x="1274" y="1370" class="edge-label" transform="rotate(-90 1274 1370)">キャンセル</text>
+
+  <!-- Asset menu -->
+  <g transform="translate(1740 550)">
+    <rect width="360" height="174" class="card" stroke="#93c5fd"/>
+    <circle cx="30" cy="31" r="13" fill="#1d4ed8"/>
+    <text x="55" y="38" class="card-title">資産メニュー</text>
+    <text x="22" y="65" class="route">/asset-balances</text>
+    <rect x="22" y="86" width="316" height="27" rx="7" fill="#2563eb"/>
+    <text x="180" y="100" class="button-text">月次残高登録</text>
+    <rect x="22" y="125" width="316" height="27" rx="7" fill="#16a34a"/>
+    <text x="180" y="139" class="button-text">月次残高一覧</text>
+  </g>
+
+  <!-- Asset bulk -->
+  <g transform="translate(1740 800)">
+    <rect width="360" height="206" class="card"/>
+    <text x="22" y="38" class="card-title">月次残高登録・一覧</text>
+    <text x="22" y="65" class="route">/asset-balances/bulk</text>
+    <rect x="22" y="82" width="316" height="20" rx="4" fill="#dbeafe"/>
+    <text x="34" y="97" class="ui-label">対象月</text>
+    <rect x="22" y="114" width="316" height="48" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="34" y="143" class="ui-label">口座・資産ごとの残高入力</text>
+    <rect x="22" y="173" width="316" height="22" rx="7" fill="#16a34a"/>
+    <text x="180" y="184" class="button-text">一括登録</text>
+  </g>
+
+  <!-- Asset list -->
+  <g transform="translate(2160 800)">
+    <rect width="360" height="206" class="card"/>
+    <text x="22" y="38" class="card-title">月次残高一覧</text>
+    <text x="22" y="65" class="route">/asset-balances/list?month=</text>
+    <rect x="22" y="82" width="110" height="20" rx="4" fill="#dbeafe"/>
+    <rect x="144" y="82" width="84" height="20" rx="4" fill="#bfdbfe"/>
+    <rect x="240" y="82" width="98" height="20" rx="4" fill="#dbeafe"/>
+    <rect x="22" y="115" width="316" height="60" rx="6" fill="#f8fafc" stroke="#cbd5e1"/>
+    <text x="34" y="140" class="ui-label">対象月・口座・残高</text>
+    <text x="34" y="161" class="ui-label">合計金額</text>
+    <rect x="22" y="184" width="316" height="12" rx="6" fill="#64748b"/>
+  </g>
+
+  <!-- Dashboard -->
+  <g transform="translate(1945 1260)">
+    <rect width="575" height="260" class="card" stroke="#67e8f9"/>
+    <circle cx="31" cy="31" r="13" fill="#0891b2"/>
+    <text x="56" y="38" class="card-title">管理画面</text>
+    <text x="22" y="65" class="route">/dashboard</text>
+    <rect x="22" y="82" width="165" height="28" rx="14" fill="#0891b2"/>
+    <rect x="198" y="82" width="165" height="28" rx="14" fill="#e2e8f0"/>
+    <rect x="374" y="82" width="179" height="28" rx="14" fill="#e2e8f0"/>
+    <text x="105" y="96" class="button-text">出金</text>
+    <text x="280" y="96" class="button-dark-text">入金</text>
+    <text x="463" y="96" class="button-dark-text">資産残高</text>
+    <path d="M35 185 L95 155 L155 175 L215 125 L275 140 L335 112 L395 150 L455 105 L535 132" fill="none" stroke="#0891b2" stroke-width="6"/>
+    <line x1="35" y1="205" x2="535" y2="205" stroke="#cbd5e1" stroke-width="2"/>
+    <text x="22" y="240" class="ui-label">月別金額 → 資産残高一覧（対象月付き）</text>
+  </g>
+
+  <!-- Asset/dashboard flows -->
+  <path d="M1920 724 V780" class="primary-flow"/>
+  <text x="1933" y="758" class="edge-label">登録</text>
+  <path d="M2100 637 H2340 V780" class="primary-flow"/>
+  <text x="2207" y="626" class="edge-label">一覧</text>
+  <path d="M2100 904 H2150" class="primary-flow"/>
+  <rect x="2047" y="868" width="157" height="25" rx="12" fill="#dbeafe"/>
+  <text x="2125" y="886" class="edge-label" text-anchor="middle">登録成功（1秒後）</text>
+  <path d="M2232 1260 V1030 H2340 V1016" class="primary-flow"/>
+  <rect x="2165" y="1095" width="151" height="48" rx="16" fill="#dbeafe"/>
+  <text x="2240" y="1116" class="edge-label" text-anchor="middle">月別金額</text>
+  <text x="2240" y="1135" class="edge-label" text-anchor="middle">対象月付き</text>
+
+  <!-- Back-to-home hints -->
+  <path d="M85 618 H55 V540 C55 530 60 526 70 526" class="back-flow"/>
+  <path d="M910 618 H880 V540 C880 530 885 526 895 526" class="back-flow"/>
+  <path d="M1740 618 H1710 V540 C1710 530 1715 526 1725 526" class="back-flow"/>
+  <text x="60" y="742" class="note">各メニューの「戻る」→ トップ</text>
+  <text x="885" y="742" class="note">各メニューの「戻る」→ トップ</text>
+  <text x="1715" y="742" class="note">資産メニューの「戻る」→ トップ</text>
+
+  <!-- Auth note -->
+  <g transform="translate(70 1618)">
+    <rect width="1535" height="105" rx="16" fill="#fff" stroke="#fecaca" stroke-width="2"/>
+    <circle cx="28" cy="30" r="11" fill="#dc2626"/>
+    <text x="50" y="36" class="edge-label" fill="#991b1b">認証遷移の省略表現</text>
+    <text x="24" y="66" class="note">赤い破線は全保護画面に共通します。localStorageにtokenがない場合、またはAPIが認証エラーを返した場合は /login へ遷移します。</text>
+    <text x="24" y="90" class="note">ログイン画面もClientLayout配下ですが、未認証時の遷移先は同じ /login です。</text>
+  </g>
+
+  <!-- Footer -->
+  <line x1="40" y1="1810" x2="2560" y2="1810" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="40" y="1845" class="note">凡例：青実線＝主要操作／灰色破線＝戻る・キャンセル／赤破線＝認証・ログアウト</text>
+  <text x="40" y="1873" class="note">対象：kakeibo-mobile-public-front/src/app および src/components（2026-07-23時点）</text>
+  <text x="2560" y="1873" class="note" text-anchor="end">Generated from implementation</text>
+</svg>
