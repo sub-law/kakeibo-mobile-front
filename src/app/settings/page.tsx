@@ -15,6 +15,10 @@ export default function SettingsPage() {
               アラート設定
             </ButtonLink>
 
+            <ButtonLink href="/settings/fixed-expenses" variant="info">
+              固定費設定
+            </ButtonLink>
+
             <ButtonLink href="/" variant="secondary">
               戻る
             </ButtonLink>

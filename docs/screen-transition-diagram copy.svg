@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="1900" viewBox="0 0 2600 1900" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="2600" height="2700" viewBox="0 0 2600 2700" role="img" aria-labelledby="title desc">
   <title id="title">俺しか使わない家計簿 画面遷移図</title>
-  <desc id="desc">Next.jsのページ実装から抽出した、ログイン、トップ、出金、入金、資産残高、管理画面の画面遷移図です。</desc>
+  <desc id="desc">Next.jsのページ実装から抽出した、ログイン、トップ、出金、入金、資産残高、管理画面、各種設定、予算アラート、固定費の全27画面の画面遷移図です。</desc>
   <defs>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#0f172a" flood-opacity=".12"/>
@@ -38,10 +38,10 @@
     </style>
   </defs>
 
-  <rect width="2600" height="1900" fill="#f8fafc"/>
+  <rect width="2600" height="2700" fill="#f8fafc"/>
   <rect x="0" y="0" width="2600" height="112" fill="#0f172a"/>
   <text x="56" y="58" class="main-title">俺しか使わない家計簿｜画面遷移図</text>
-  <text x="58" y="91" class="header-subtitle">Next.js App Routerのページ・リンク・router.pushを基に作成（全17画面）</text>
+  <text x="58" y="91" class="header-subtitle">Next.js App Routerのページ・リンク・router.pushを基に作成（全27画面）</text>
 
   <!-- Legend -->
   <g transform="translate(1740 25)">
@@ -75,14 +75,16 @@
     <circle cx="31" cy="31" r="13" fill="#2563eb"/>
     <text x="56" y="38" class="card-title">家計簿トップ</text>
     <text x="22" y="65" class="route">/</text>
-    <rect x="22" y="82" width="196" height="26" rx="7" fill="#2563eb"/>
-    <rect x="242" y="82" width="196" height="26" rx="7" fill="#16a34a"/>
-    <rect x="22" y="119" width="196" height="26" rx="7" fill="#334155"/>
-    <rect x="242" y="119" width="196" height="26" rx="7" fill="#0891b2"/>
-    <text x="120" y="95" class="button-text">出金</text>
-    <text x="340" y="95" class="button-text">入金</text>
-    <text x="120" y="132" class="button-text">資産残高</text>
-    <text x="340" y="132" class="button-text">管理画面</text>
+    <rect x="22" y="78" width="196" height="22" rx="7" fill="#2563eb"/>
+    <rect x="242" y="78" width="196" height="22" rx="7" fill="#16a34a"/>
+    <rect x="22" y="108" width="196" height="22" rx="7" fill="#334155"/>
+    <rect x="242" y="108" width="196" height="22" rx="7" fill="#0891b2"/>
+    <rect x="22" y="138" width="416" height="22" rx="7" fill="#64748b"/>
+    <text x="120" y="89" class="button-text">出金</text>
+    <text x="340" y="89" class="button-text">入金</text>
+    <text x="120" y="119" class="button-text">資産残高</text>
+    <text x="340" y="119" class="button-text">管理画面</text>
+    <text x="230" y="149" class="button-text">各種設定</text>
   </g>
 
   <path d="M465 298 H1010" class="primary-flow"/>
@@ -402,9 +404,180 @@
     <text x="24" y="90" class="note">ログイン画面もClientLayout配下ですが、未認証時の遷移先は同じ /login です。</text>
   </g>
 
+  <!-- Settings section -->
+  <rect x="40" y="1780" width="2520" height="770" rx="24" fill="#faf5ff" stroke="#ddd6fe" stroke-width="2"/>
+  <text x="70" y="1824" class="section-title" fill="#6b21a8">各種設定</text>
+  <text x="70" y="1851" class="section-sub">予算アラート・固定費の登録、一覧、修正、固定費の月次出金処理</text>
+
+  <rect x="465" y="1865" width="900" height="640" rx="20" fill="#fffbeb" stroke="#fde68a" stroke-width="2"/>
+  <text x="490" y="1895" class="section-title" fill="#92400e">予算アラート</text>
+  <rect x="1390" y="1865" width="1130" height="640" rx="20" fill="#f0fdfa" stroke="#99f6e4" stroke-width="2"/>
+  <text x="1415" y="1895" class="section-title" fill="#115e59">固定費</text>
+
+  <!-- Home/settings and settings-menu flows -->
+  <path d="M1260 385 V420 H24 V1995 H65" class="primary-flow"/>
+  <text x="38" y="1750" class="edge-label" transform="rotate(-90 38 1750)">「各種設定」</text>
+  <path d="M425 1978 H480" class="primary-flow"/>
+  <text x="447" y="1965" class="edge-label" text-anchor="middle">予算</text>
+  <path d="M425 2022 H1380 V1978 H1400" class="primary-flow"/>
+  <text x="1040" y="2009" class="edge-label" text-anchor="middle">固定費</text>
+
+  <!-- Budget-alert flows -->
+  <path d="M610 2080 V2130" class="primary-flow"/>
+  <path d="M750 2080 V2115 H1140 V2130" class="primary-flow"/>
+  <path d="M860 2235 H940" class="primary-flow"/>
+  <text x="900" y="2222" class="edge-label" text-anchor="middle">登録成功</text>
+  <path d="M1140 2320 V2330" class="primary-flow"/>
+  <path d="M1320 2420 H1340 V2235 H1320" class="primary-flow"/>
+  <path d="M500 2032 H445" class="back-flow"/>
+
+  <!-- Fixed-expense flows -->
+  <path d="M1530 2100 V2130" class="primary-flow"/>
+  <path d="M1760 2100 H2175 V2130" class="primary-flow"/>
+  <path d="M1650 2100 V2330" class="primary-flow"/>
+  <path d="M1800 2235 H1850" class="primary-flow"/>
+  <text x="1825" y="2222" class="edge-label" text-anchor="middle">登録成功</text>
+  <path d="M2175 2320 V2330" class="primary-flow"/>
+  <path d="M2480 2420 H2500 V2235 H2480" class="primary-flow"/>
+  <path d="M1420 2420 H1380 V2040 H1400" class="back-flow"/>
+  <path d="M1610 2490 V2570 H850 V994 H635 V984" class="primary-flow"/>
+  <rect x="915" y="2554" width="214" height="28" rx="14" fill="#dbeafe"/>
+  <text x="1022" y="2574" class="edge-label" text-anchor="middle">処理後：出金一覧</text>
+
+  <!-- Settings menu -->
+  <g transform="translate(85 1905)">
+    <rect width="340" height="190" class="card" stroke="#c4b5fd"/>
+    <circle cx="30" cy="31" r="13" fill="#7c3aed"/>
+    <text x="55" y="38" class="card-title">各種設定</text>
+    <text x="22" y="65" class="route">/settings</text>
+    <rect x="22" y="80" width="296" height="25" rx="7" fill="#2563eb"/>
+    <text x="170" y="93" class="button-text">予算アラート設定</text>
+    <rect x="22" y="114" width="296" height="25" rx="7" fill="#0891b2"/>
+    <text x="170" y="127" class="button-text">固定費設定</text>
+    <rect x="22" y="148" width="296" height="25" rx="7" fill="#64748b"/>
+    <text x="170" y="161" class="button-text">戻る → トップ</text>
+  </g>
+
+  <!-- Budget-alert menu -->
+  <g transform="translate(500 1895)">
+    <rect width="360" height="185" class="card" stroke="#fbbf24"/>
+    <circle cx="30" cy="31" r="13" fill="#d97706"/>
+    <text x="55" y="38" class="card-title">予算アラート設定</text>
+    <text x="22" y="65" class="route">/settings/budget-alerts</text>
+    <rect x="22" y="80" width="316" height="24" rx="7" fill="#2563eb"/>
+    <text x="180" y="92" class="button-text">アラート設定登録</text>
+    <rect x="22" y="112" width="316" height="24" rx="7" fill="#16a34a"/>
+    <text x="180" y="124" class="button-text">アラート設定一覧・修正</text>
+    <rect x="22" y="144" width="316" height="24" rx="7" fill="#64748b"/>
+    <text x="180" y="156" class="button-text">戻る</text>
+  </g>
+
+  <!-- Budget-alert create -->
+  <g transform="translate(500 2150)">
+    <rect width="360" height="170" class="card"/>
+    <text x="22" y="36" class="card-title">アラート設定登録</text>
+    <text x="22" y="62" class="route">/settings/budget-alerts/create</text>
+    <rect x="22" y="78" width="316" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="104" width="316" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="132" width="202" height="25" rx="7" fill="#16a34a"/>
+    <rect x="234" y="132" width="104" height="25" rx="7" fill="#64748b"/>
+    <text x="123" y="145" class="button-text">登録</text>
+    <text x="286" y="145" class="button-text">戻る</text>
+  </g>
+
+  <!-- Budget-alert list -->
+  <g transform="translate(960 2150)">
+    <rect width="360" height="170" class="card"/>
+    <text x="22" y="36" class="card-title">アラート設定一覧</text>
+    <text x="22" y="62" class="route">/settings/budget-alerts/list</text>
+    <rect x="22" y="78" width="316" height="48" rx="6" fill="#fffbeb" stroke="#fde68a"/>
+    <text x="36" y="99" class="ui-label">カテゴリ・月間予算・警告割合</text>
+    <rect x="224" y="101" width="96" height="18" rx="6" fill="#2563eb"/>
+    <text x="272" y="110" class="button-text">修正</text>
+    <rect x="22" y="138" width="148" height="22" rx="7" fill="#2563eb"/>
+    <rect x="182" y="138" width="156" height="22" rx="7" fill="#64748b"/>
+  </g>
+
+  <!-- Budget-alert edit -->
+  <g transform="translate(960 2350)">
+    <rect width="360" height="140" class="card"/>
+    <text x="22" y="35" class="card-title">アラート設定修正</text>
+    <text x="22" y="61" class="route">/settings/budget-alerts/[id]/edit</text>
+    <rect x="22" y="76" width="316" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="104" width="202" height="24" rx="7" fill="#2563eb"/>
+    <rect x="234" y="104" width="104" height="24" rx="7" fill="#64748b"/>
+    <text x="123" y="116" class="button-text">更新</text>
+    <text x="286" y="116" class="button-text">戻る</text>
+  </g>
+
+  <!-- Fixed-expense menu -->
+  <g transform="translate(1420 1895)">
+    <rect width="420" height="205" class="card" stroke="#5eead4"/>
+    <circle cx="30" cy="31" r="13" fill="#0f766e"/>
+    <text x="55" y="38" class="card-title">固定費設定</text>
+    <text x="22" y="65" class="route">/settings/fixed-expenses</text>
+    <rect x="22" y="78" width="376" height="22" rx="7" fill="#2563eb"/>
+    <text x="210" y="89" class="button-text">固定費登録</text>
+    <rect x="22" y="106" width="376" height="22" rx="7" fill="#0891b2"/>
+    <text x="210" y="117" class="button-text">固定費一覧・修正</text>
+    <rect x="22" y="134" width="376" height="22" rx="7" fill="#16a34a"/>
+    <text x="210" y="145" class="button-text">今月分を出金処理</text>
+    <rect x="22" y="162" width="376" height="22" rx="7" fill="#64748b"/>
+    <text x="210" y="173" class="button-text">戻る</text>
+  </g>
+
+  <!-- Fixed-expense create -->
+  <g transform="translate(1420 2150)">
+    <rect width="380" height="170" class="card"/>
+    <text x="22" y="36" class="card-title">固定費登録</text>
+    <text x="22" y="62" class="route">/settings/fixed-expenses/create</text>
+    <rect x="22" y="78" width="336" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="104" width="336" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="132" width="222" height="25" rx="7" fill="#16a34a"/>
+    <rect x="254" y="132" width="104" height="25" rx="7" fill="#64748b"/>
+    <text x="133" y="145" class="button-text">登録</text>
+    <text x="306" y="145" class="button-text">戻る</text>
+  </g>
+
+  <!-- Fixed-expense list -->
+  <g transform="translate(1870 2150)">
+    <rect width="610" height="170" class="card"/>
+    <text x="22" y="36" class="card-title">固定費一覧・修正</text>
+    <text x="22" y="62" class="route">/settings/fixed-expenses/list</text>
+    <rect x="22" y="78" width="566" height="48" rx="6" fill="#f0fdfa" stroke="#99f6e4"/>
+    <text x="36" y="99" class="ui-label">用途・カテゴリ・月額・有効／無効</text>
+    <rect x="470" y="101" width="100" height="18" rx="6" fill="#2563eb"/>
+    <text x="520" y="110" class="button-text">修正</text>
+    <rect x="22" y="138" width="276" height="22" rx="7" fill="#2563eb"/>
+    <rect x="312" y="138" width="276" height="22" rx="7" fill="#64748b"/>
+  </g>
+
+  <!-- Fixed-expense process confirmation -->
+  <g transform="translate(1420 2350)">
+    <rect width="380" height="140" class="card" stroke="#86efac"/>
+    <text x="22" y="35" class="card-title">固定費出金の確認</text>
+    <text x="22" y="61" class="route">/settings/fixed-expenses/process/confirm</text>
+    <rect x="22" y="76" width="336" height="18" rx="5" fill="#fef9c3"/>
+    <text x="34" y="89" class="ui-label">対象日・件数・合計・固定費一覧</text>
+    <rect x="22" y="104" width="336" height="24" rx="7" fill="#16a34a"/>
+    <text x="190" y="116" class="button-text">出金処理を実行</text>
+  </g>
+
+  <!-- Fixed-expense edit -->
+  <g transform="translate(1870 2350)">
+    <rect width="610" height="140" class="card"/>
+    <text x="22" y="35" class="card-title">固定費修正</text>
+    <text x="22" y="61" class="route">/settings/fixed-expenses/[id]/edit</text>
+    <rect x="22" y="76" width="566" height="17" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="104" width="390" height="24" rx="7" fill="#2563eb"/>
+    <rect x="424" y="104" width="164" height="24" rx="7" fill="#64748b"/>
+    <text x="217" y="116" class="button-text">更新</text>
+    <text x="506" y="116" class="button-text">戻る</text>
+  </g>
+
   <!-- Footer -->
-  <line x1="40" y1="1810" x2="2560" y2="1810" stroke="#cbd5e1" stroke-width="2"/>
-  <text x="40" y="1845" class="note">凡例：青実線＝主要操作／灰色破線＝戻る・キャンセル／赤破線＝認証・ログアウト</text>
-  <text x="40" y="1873" class="note">対象：kakeibo-mobile-public-front/src/app および src/components（2026-07-23時点）</text>
-  <text x="2560" y="1873" class="note" text-anchor="end">Generated from implementation</text>
+  <line x1="40" y1="2605" x2="2560" y2="2605" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="40" y="2640" class="note">凡例：青実線＝主要操作／灰色破線＝戻る・キャンセル／赤破線＝認証・ログアウト</text>
+  <text x="40" y="2670" class="note">対象：kakeibo-mobile-private-front/src/app および src/components（2026-08-01時点）</text>
+  <text x="2560" y="2670" class="note" text-anchor="end">Generated from implementation</text>
 </svg>
