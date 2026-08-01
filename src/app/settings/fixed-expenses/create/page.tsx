@@ -161,6 +161,45 @@ export default function FixedExpenseCreatePage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
+              <label htmlFor="memo" className="mb-1 block font-semibold">
+                用途
+              </label>
+              <input
+                id="memo"
+                type="text"
+                maxLength={255}
+                value={memo}
+                onChange={(event) => setMemo(event.target.value)}
+                className="w-full rounded border p-2"
+                placeholder="例: 生命保険料"
+              />
+              {errors.memo && (
+                <p className="mt-1 text-sm text-red-600">{errors.memo[0]}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="amount" className="mb-1 block font-semibold">
+                月額料金
+              </label>
+              <input
+                id="amount"
+                type="number"
+                min="1"
+                max="4294967295"
+                value={amount}
+                onChange={(event) => setAmount(event.target.value)}
+                className="no-number-spinner w-full rounded border p-2"
+                placeholder="例: 12000"
+              />
+              {errors.amount && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.amount[0]}
+                </p>
+              )}
+            </div>
+
+            <div>
               <label htmlFor="category" className="mb-1 block font-semibold">
                 カテゴリ
               </label>
@@ -191,47 +230,6 @@ export default function FixedExpenseCreatePage() {
               )}
             </div>
 
-            <div>
-              <label htmlFor="amount" className="mb-1 block font-semibold">
-                月額料金
-              </label>
-              <input
-                id="amount"
-                type="number"
-                min="1"
-                max="2147483647"
-                value={amount}
-                onChange={(event) => setAmount(event.target.value)}
-                className="no-number-spinner w-full rounded border p-2"
-                placeholder="例: 12000"
-              />
-              {errors.amount && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.amount[0]}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="memo" className="mb-1 block font-semibold">
-                用途
-              </label>
-              <input
-                id="memo"
-                type="text"
-                maxLength={255}
-                value={memo}
-                onChange={(event) => setMemo(event.target.value)}
-                className="w-full rounded border p-2"
-                placeholder="例: 生命保険料"
-              />
-              {errors.memo && (
-                <p className="mt-1 text-sm text-red-600">
-                  {errors.memo[0]}
-                </p>
-              )}
-            </div>
-
             <label className="flex items-center gap-2 font-semibold">
               <input
                 type="checkbox"
@@ -241,15 +239,15 @@ export default function FixedExpenseCreatePage() {
               />
               出金処理の対象にする
             </label>
+            {errors.is_enabled && (
+              <p className="text-sm text-red-600">{errors.is_enabled[0]}</p>
+            )}
 
             <Button type="submit" variant="success">
               登録する
             </Button>
 
-            <ButtonLink
-              href="/settings/fixed-expenses"
-              variant="secondary"
-            >
+            <ButtonLink href="/settings/fixed-expenses" variant="secondary">
               戻る
             </ButtonLink>
           </form>

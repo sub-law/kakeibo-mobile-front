@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import ClientLayout from "@/components/ClientLayout";
-import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 
 interface PreviewFixedExpense {
@@ -20,40 +19,36 @@ interface PreviewFixedExpense {
   };
 }
 
-interface FixedExpensePreview {
+interface ProcessPreview {
   target_month: string;
   expense_date: string;
+  fixed_expenses: PreviewFixedExpense[];
   count: number;
   total_amount: number;
-  fixed_expenses: PreviewFixedExpense[];
 }
 
-function currentTargetMonth(): string {
-  const today = new Date();
-  const month = String(today.getMonth() + 1).padStart(2, "0");
-
-  return `${today.getFullYear()}-${month}`;
+interface ProcessResult {
+  message: string;
+  target_month: string;
+  expense_date: string;
+  created_count: number;
+  skipped_count: number;
+  total_amount: number;
 }
 
-function formatMonth(value: string): string {
-  const [year, month] = value.split("-");
-
+function formatTargetMonth(targetMonth: string) {
+  const [year, month] = targetMonth.split("-");
   return `${year}年${Number(month)}月`;
 }
 
-function formatDate(value: string): string {
-  const [year, month, day] = value.split("-");
-
-  return `${year}年${Number(month)}月${Number(day)}日`;
-}
-
-export default function FixedExpenseProcessConfirmPage() {
+function FixedExpenseProcessConfirmContent() {
   const router = useRouter();
-  const targetMonth = currentTargetMonth();
-  const [preview, setPreview] = useState<FixedExpensePreview | null>(null);
+  const searchParams = useSearchParams();
+  const targetMonth = searchParams.get("target_month") ?? "";
+  const [preview, setPreview] = useState<ProcessPreview | null>(null);
+  const [result, setResult] = useState<ProcessResult | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
   const [requestError, setRequestError] = useState("");
 
   useEffect(() => {
@@ -68,7 +63,7 @@ export default function FixedExpenseProcessConfirmPage() {
     const fetchPreview = async () => {
       try {
         const response = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/fixed-expenses/process-preview?target_month=${targetMonth}`,
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/fixed-expenses/process-preview?target_month=${encodeURIComponent(targetMonth)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -85,16 +80,14 @@ export default function FixedExpenseProcessConfirmPage() {
 
         if (response.status === 422) {
           const data = await response.json();
-          throw new Error(
-            data.errors?.target_month?.[0] ?? "出金内容の確認に失敗しました。",
-          );
+          throw new Error(data.errors?.target_month?.[0] ?? "対象月が正しくありません。");
         }
 
         if (!response.ok) {
-          throw new Error("出金内容の確認に失敗しました。");
+          throw new Error("固定費の確認情報を取得できませんでした。");
         }
 
-        const data: FixedExpensePreview = await response.json();
+        const data: ProcessPreview = await response.json();
 
         if (!cancelled) {
           setPreview(data);
@@ -104,7 +97,7 @@ export default function FixedExpenseProcessConfirmPage() {
           setRequestError(
             error instanceof Error
               ? error.message
-              : "出金内容の確認に失敗しました。時間をおいて再度お試しください。",
+              : "固定費の確認情報を取得できませんでした。",
           );
         }
       } finally {
@@ -122,7 +115,7 @@ export default function FixedExpenseProcessConfirmPage() {
   }, [router, targetMonth]);
 
   const handleProcess = async () => {
-    if (!preview || preview.count === 0 || processing) {
+    if (processing || !preview || preview.count === 0) {
       return;
     }
 
@@ -146,9 +139,7 @@ export default function FixedExpenseProcessConfirmPage() {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-          body: JSON.stringify({
-            target_month: preview.target_month,
-          }),
+          body: JSON.stringify({ target_month: targetMonth }),
         },
       );
 
@@ -161,29 +152,35 @@ export default function FixedExpenseProcessConfirmPage() {
       if (response.status === 422) {
         const data = await response.json();
         setRequestError(
-          data.errors?.target_month?.[0] ?? "出金処理に失敗しました。",
+          data.errors?.target_month?.[0] ?? "出金処理を実行できませんでした。",
         );
         return;
       }
 
       if (!response.ok) {
-        throw new Error("出金処理に失敗しました。");
+        throw new Error("固定費の出金処理に失敗しました。");
       }
 
-      const data: { message: string } = await response.json();
-      setSuccessMessage(data.message);
-      setTimeout(() => {
-        const [year, month] = preview.target_month.split("-");
-        router.push(`/expenses/list?year=${year}&month=${Number(month)}`);
-      }, 1000);
+      const data: ProcessResult = await response.json();
+      setResult(data);
     } catch {
       setRequestError(
-        "出金処理に失敗しました。時間をおいて再度お試しください。",
+        "固定費の出金処理に失敗しました。時間をおいて再度お試しください。",
       );
     } finally {
       setProcessing(false);
     }
   };
+
+  if (loading) {
+    return (
+      <ClientLayout>
+        <main className="min-h-screen bg-gray-100 p-6">
+          <p className="text-center text-gray-600">読み込み中...</p>
+        </main>
+      </ClientLayout>
+    );
+  }
 
   return (
     <ClientLayout>
@@ -191,85 +188,139 @@ export default function FixedExpenseProcessConfirmPage() {
         <div className="mx-auto max-w-lg rounded bg-white p-6 shadow">
           <h1 className="mb-4 text-2xl font-bold">固定費出金の確認</h1>
 
-          {successMessage && (
-            <p className="mb-4 rounded border border-green-300 bg-green-100 p-3 text-green-700">
-              {successMessage}
-            </p>
-          )}
-
           {requestError && (
             <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-red-700">
               {requestError}
             </p>
           )}
 
-          {loading ? (
-            <p className="py-6 text-center text-gray-600">読み込み中...</p>
-          ) : preview ? (
-            <>
+          {result ? (
+            <div>
+              <p className="mb-4 rounded border border-green-300 bg-green-100 p-3 text-green-700">
+                {result.message}
+              </p>
               <dl className="mb-4 space-y-2 rounded bg-gray-50 p-4">
                 <div className="flex justify-between gap-4">
-                  <dt className="font-semibold">対象月</dt>
-                  <dd>{formatMonth(preview.target_month)}</dd>
+                  <dt>対象月</dt>
+                  <dd className="font-semibold">
+                    {formatTargetMonth(result.target_month)}
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="font-semibold">出金日</dt>
-                  <dd>{formatDate(preview.expense_date)}</dd>
+                  <dt>登録件数</dt>
+                  <dd className="font-semibold">{result.created_count}件</dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="font-semibold">件数</dt>
-                  <dd>{preview.count} 件</dd>
-                </div>
-                <div className="flex justify-between gap-4">
-                  <dt className="font-semibold">合計金額</dt>
-                  <dd className="font-bold">
-                    {preview.total_amount.toLocaleString()} 円
+                  <dt>合計金額</dt>
+                  <dd className="font-semibold">
+                    {result.total_amount.toLocaleString()} 円
                   </dd>
                 </div>
               </dl>
 
-              {preview.fixed_expenses.length === 0 ? (
-                <p className="rounded bg-gray-50 p-4 text-center text-gray-600">
-                  今月出金できる固定費はありません。
+              <ButtonLink href="/expenses/list" variant="info">
+                出金一覧を確認
+              </ButtonLink>
+              <ButtonLink
+                href="/settings/fixed-expenses"
+                variant="secondary"
+                className="mt-4"
+              >
+                固定費設定へ戻る
+              </ButtonLink>
+            </div>
+          ) : preview ? (
+            <div>
+              <p className="mb-4 rounded bg-yellow-50 p-3 text-sm text-yellow-900">
+                {formatTargetMonth(preview.target_month)}分として、以下の固定費を
+                {preview.expense_date}付で出金登録します。
+              </p>
+
+              {preview.count === 0 ? (
+                <p className="mb-4 rounded bg-gray-50 p-4 text-center text-gray-600">
+                  今月分の未処理の固定費はありません。
                 </p>
               ) : (
-                <div className="mb-4 space-y-3">
-                  {preview.fixed_expenses.map((fixedExpense) => (
-                    <section
-                      key={fixedExpense.id}
-                      className="rounded border border-gray-200 p-4"
-                    >
-                      <p className="text-sm text-gray-600">
-                        {fixedExpense.category.group.name} / {fixedExpense.category.name}
-                      </p>
-                      <div className="mt-1 flex justify-between gap-4">
-                        <h2 className="font-semibold">{fixedExpense.memo}</h2>
-                        <p className="shrink-0 font-bold">
-                          {fixedExpense.amount.toLocaleString()} 円
-                        </p>
-                      </div>
-                    </section>
-                  ))}
-                </div>
+                <>
+                  <div className="mb-4 space-y-3">
+                    {preview.fixed_expenses.map((fixedExpense) => (
+                      <section
+                        key={fixedExpense.id}
+                        className="rounded border border-gray-200 p-4"
+                      >
+                        <div className="flex justify-between gap-4">
+                          <div>
+                            <h2 className="font-bold">{fixedExpense.memo}</h2>
+                            <p className="mt-1 text-sm text-gray-600">
+                              {fixedExpense.category.group.name} / {fixedExpense.category.name}
+                            </p>
+                          </div>
+                          <p className="shrink-0 font-semibold">
+                            {fixedExpense.amount.toLocaleString()} 円
+                          </p>
+                        </div>
+                      </section>
+                    ))}
+                  </div>
+
+                  <div className="mb-4 rounded bg-gray-50 p-4">
+                    <p className="flex justify-between">
+                      <span>対象件数</span>
+                      <span className="font-bold">{preview.count}件</span>
+                    </p>
+                    <p className="mt-2 flex justify-between">
+                      <span>合計金額</span>
+                      <span className="font-bold">
+                        {preview.total_amount.toLocaleString()} 円
+                      </span>
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleProcess}
+                    disabled={processing}
+                    className="w-full rounded bg-green-600 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+                  >
+                    {processing ? "処理中..." : "出金処理を実行"}
+                  </button>
+                </>
               )}
 
-              {preview.count > 0 && !successMessage && (
-                <Button onClick={() => void handleProcess()} variant="success">
-                  {processing ? "出金処理中..." : "承認して出金する"}
-                </Button>
-              )}
-            </>
-          ) : null}
-
-          <ButtonLink
-            href="/settings/fixed-expenses"
-            variant="secondary"
-            className="mt-4"
-          >
-            戻る
-          </ButtonLink>
+              <ButtonLink
+                href="/settings/fixed-expenses"
+                variant="secondary"
+                className="mt-4"
+              >
+                戻る
+              </ButtonLink>
+            </div>
+          ) : (
+            <ButtonLink
+              href="/settings/fixed-expenses"
+              variant="secondary"
+            >
+              戻る
+            </ButtonLink>
+          )}
         </div>
       </main>
     </ClientLayout>
+  );
+}
+
+export default function FixedExpenseProcessConfirmPage() {
+  return (
+    <Suspense
+      fallback={
+        <ClientLayout>
+          <main className="min-h-screen bg-gray-100 p-6">
+            <p className="text-center text-gray-600">読み込み中...</p>
+          </main>
+        </ClientLayout>
+      }
+    >
+      <FixedExpenseProcessConfirmContent />
+    </Suspense>
   );
 }

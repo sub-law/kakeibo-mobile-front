@@ -109,14 +109,14 @@ export default function FixedExpenseListPage() {
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm text-gray-600">
-                        {fixedExpense.category.group.name} / {fixedExpense.category.name}
-                      </p>
                       <h2 className="font-bold text-gray-900">
                         {fixedExpense.memo}
                       </h2>
-                      <p className="mt-1 text-gray-700">
+                      <p className="mt-1 text-sm text-gray-700">
                         月額：{fixedExpense.amount.toLocaleString()} 円
+                      </p>
+                      <p className="mt-1 text-sm text-gray-600">
+                        {fixedExpense.category.group.name} / {fixedExpense.category.name}
                       </p>
                       <p
                         className={`mt-1 text-sm font-semibold ${
@@ -148,14 +148,6 @@ export default function FixedExpenseListPage() {
             className="mt-4"
           >
             固定費を追加
-          </ButtonLink>
-
-          <ButtonLink
-            href="/settings/fixed-expenses/process/confirm"
-            variant="info"
-            className="mt-4"
-          >
-            出金処理へ
           </ButtonLink>
 
           <ButtonLink
