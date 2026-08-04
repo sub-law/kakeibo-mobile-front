@@ -2,7 +2,7 @@
 "use client";
 
 import ClientLayout from "../../components/ClientLayout";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Button from "@/components/ui/Button";
@@ -12,11 +12,23 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
   const [errors, setErrors] = useState<{
     email?: string;
     password?: string;
     general?: string;
   }>({});
+
+  useEffect(() => {
+    const message = sessionStorage.getItem("passwordChangeSuccess");
+
+    if (!message) {
+      return;
+    }
+
+    sessionStorage.removeItem("passwordChangeSuccess");
+    Promise.resolve().then(() => setSuccessMessage(message));
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +77,12 @@ export default function LoginPage() {
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md p-6 bg-white rounded shadow">
           <h1 className="text-2xl font-bold text-center mb-4">ログイン</h1>
+
+          {successMessage && (
+            <p className="mb-4 rounded border border-green-300 bg-green-100 p-3 text-green-700">
+              {successMessage}
+            </p>
+          )}
 
           {errors.general && (
             <p className="text-red-600 mb-2">{errors.general}</p>

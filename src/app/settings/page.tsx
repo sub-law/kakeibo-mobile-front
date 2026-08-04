@@ -19,6 +19,10 @@ export default function SettingsPage() {
               固定費設定
             </ButtonLink>
 
+            <ButtonLink href="/settings/password" variant="dark">
+              パスワード変更
+            </ButtonLink>
+
             <ButtonLink href="/" variant="secondary">
               戻る
             </ButtonLink>
