@@ -48,6 +48,31 @@ export default function ExpenseCategorySummaryPage() {
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    let hideTimerId: number | undefined;
+    const showTimerId = window.setTimeout(() => {
+      const message = sessionStorage.getItem("expenseCreateSuccessMessage");
+
+      if (!message) {
+        return;
+      }
+
+      sessionStorage.removeItem("expenseCreateSuccessMessage");
+      setSuccessMessage(message);
+      hideTimerId = window.setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(showTimerId);
+      if (hideTimerId !== undefined) {
+        window.clearTimeout(hideTimerId);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -169,6 +194,15 @@ export default function ExpenseCategorySummaryPage() {
       <main className="min-h-screen bg-gray-100 px-4 py-5 sm:p-6">
         <div className="mx-auto max-w-md rounded-lg bg-white p-4 shadow sm:p-6">
           <h1 className="mb-5 text-2xl font-bold">出金一覧（カテゴリ別）</h1>
+
+          {successMessage && (
+            <p
+              role="status"
+              className="mb-4 rounded border border-green-300 bg-green-100 p-2 text-center text-green-700"
+            >
+              {successMessage}
+            </p>
+          )}
 
           <div className="mb-5 flex items-center justify-between gap-3">
             <Button
