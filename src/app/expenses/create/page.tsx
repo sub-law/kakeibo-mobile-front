@@ -24,7 +24,6 @@ export default function ExpenseCreatePage() {
 
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
-  const [successMessage, setSuccessMessage] = useState("");
 
   // ★ カテゴリ一覧取得
   useEffect(() => {
@@ -84,12 +83,8 @@ export default function ExpenseCreatePage() {
     }
 
     if (res.ok) {
-      setSuccessMessage("登録しました");
-
-      setTimeout(() => {
-        setSuccessMessage("");
-        router.push("/expenses/category-summary");
-      }, 1000);
+      sessionStorage.setItem("expenseCreateSuccessMessage", "登録しました");
+      router.push("/expenses/category-summary");
     } else {
       alert("登録に失敗しました");
     }
@@ -97,12 +92,6 @@ export default function ExpenseCreatePage() {
 
   return (
     <ClientLayout>
-      {successMessage && (
-        <p className="mb-4 p-2 text-green-700 bg-green-100 border border-green-300 rounded text-center">
-          {successMessage}
-        </p>
-      )}
-
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
           <h1 className="text-2xl font-bold mb-4">出金入力</h1>
