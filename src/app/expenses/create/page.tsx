@@ -88,7 +88,7 @@ export default function ExpenseCreatePage() {
 
       setTimeout(() => {
         setSuccessMessage("");
-        router.push("/expenses/list");
+        router.push("/expenses/category-summary");
       }, 1000);
     } else {
       alert("登録に失敗しました");

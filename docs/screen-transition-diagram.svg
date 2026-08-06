@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="2600" height="2700" viewBox="0 0 2600 2700" role="img" aria-labelledby="title desc">
   <title id="title">俺しか使わない家計簿 画面遷移図</title>
-  <desc id="desc">Next.jsのページ実装から抽出した、ログイン、トップ、出金、入金、資産残高、管理画面、各種設定、予算アラート、固定費の全27画面の画面遷移図です。</desc>
+  <desc id="desc">Next.jsのページ実装から抽出した、ログイン、トップ、出金、入金、資産残高、管理画面、各種設定、予算アラート、固定費、パスワード変更の全28画面の画面遷移図です。</desc>
   <defs>
     <filter id="shadow" x="-20%" y="-20%" width="140%" height="150%">
       <feDropShadow dx="0" dy="5" stdDeviation="8" flood-color="#0f172a" flood-opacity=".12"/>
@@ -41,7 +41,7 @@
   <rect width="2600" height="2700" fill="#f8fafc"/>
   <rect x="0" y="0" width="2600" height="112" fill="#0f172a"/>
   <text x="56" y="58" class="main-title">俺しか使わない家計簿｜画面遷移図</text>
-  <text x="58" y="91" class="header-subtitle">Next.js App Routerのページ・リンク・router.pushを基に作成（全27画面）</text>
+  <text x="58" y="91" class="header-subtitle">Next.js App Routerのページ・リンク・router.pushを基に作成（全28画面）</text>
 
   <!-- Legend -->
   <g transform="translate(1740 25)">
@@ -407,7 +407,7 @@
   <!-- Settings section -->
   <rect x="40" y="1780" width="2520" height="770" rx="24" fill="#faf5ff" stroke="#ddd6fe" stroke-width="2"/>
   <text x="70" y="1824" class="section-title" fill="#6b21a8">各種設定</text>
-  <text x="70" y="1851" class="section-sub">予算アラート・固定費の登録、一覧、修正、固定費の月次出金処理</text>
+  <text x="70" y="1851" class="section-sub">予算アラート・固定費の登録、一覧、修正、パスワード変更、固定費の月次出金処理</text>
 
   <rect x="465" y="1865" width="900" height="640" rx="20" fill="#fffbeb" stroke="#fde68a" stroke-width="2"/>
   <text x="490" y="1895" class="section-title" fill="#92400e">予算アラート</text>
@@ -417,10 +417,12 @@
   <!-- Home/settings and settings-menu flows -->
   <path d="M1260 385 V420 H24 V1995 H65" class="primary-flow"/>
   <text x="38" y="1750" class="edge-label" transform="rotate(-90 38 1750)">「各種設定」</text>
-  <path d="M425 1978 H480" class="primary-flow"/>
-  <text x="447" y="1965" class="edge-label" text-anchor="middle">予算</text>
-  <path d="M425 2022 H1380 V1978 H1400" class="primary-flow"/>
-  <text x="1040" y="2009" class="edge-label" text-anchor="middle">固定費</text>
+  <path d="M425 1997 H480" class="primary-flow"/>
+  <text x="447" y="1984" class="edge-label" text-anchor="middle">予算</text>
+  <path d="M425 2029 H1380 V1978 H1400" class="primary-flow"/>
+  <text x="1040" y="2016" class="edge-label" text-anchor="middle">固定費</text>
+  <path d="M425 2061 H445 V2145 H255 V2160" class="primary-flow"/>
+  <text x="345" y="2133" class="edge-label" text-anchor="middle">パスワード</text>
 
   <!-- Budget-alert flows -->
   <path d="M610 2080 V2130" class="primary-flow"/>
@@ -430,6 +432,12 @@
   <path d="M1140 2320 V2330" class="primary-flow"/>
   <path d="M1320 2420 H1340 V2235 H1320" class="primary-flow"/>
   <path d="M500 2032 H445" class="back-flow"/>
+
+  <!-- Password-change flows -->
+  <path d="M85 2422 H58 V2088 H75" class="back-flow"/>
+  <path d="M85 2422 H12 V300 H95" class="auth-flow"/>
+  <rect x="70" y="2470" width="350" height="28" rx="14" fill="#ffe4e6"/>
+  <text x="245" y="2490" class="edge-label" fill="#be123c" text-anchor="middle">変更成功・ログアウト → /login</text>
 
   <!-- Fixed-expense flows -->
   <path d="M1530 2100 V2130" class="primary-flow"/>
@@ -446,16 +454,38 @@
 
   <!-- Settings menu -->
   <g transform="translate(85 1905)">
-    <rect width="340" height="190" class="card" stroke="#c4b5fd"/>
+    <rect width="340" height="218" class="card" stroke="#c4b5fd"/>
     <circle cx="30" cy="31" r="13" fill="#7c3aed"/>
     <text x="55" y="38" class="card-title">各種設定</text>
     <text x="22" y="65" class="route">/settings</text>
-    <rect x="22" y="80" width="296" height="25" rx="7" fill="#2563eb"/>
-    <text x="170" y="93" class="button-text">予算アラート設定</text>
-    <rect x="22" y="114" width="296" height="25" rx="7" fill="#0891b2"/>
-    <text x="170" y="127" class="button-text">固定費設定</text>
-    <rect x="22" y="148" width="296" height="25" rx="7" fill="#64748b"/>
-    <text x="170" y="161" class="button-text">戻る → トップ</text>
+    <rect x="22" y="80" width="296" height="24" rx="7" fill="#2563eb"/>
+    <text x="170" y="92" class="button-text">予算アラート設定</text>
+    <rect x="22" y="112" width="296" height="24" rx="7" fill="#0891b2"/>
+    <text x="170" y="124" class="button-text">固定費設定</text>
+    <rect x="22" y="144" width="296" height="24" rx="7" fill="#334155"/>
+    <text x="170" y="156" class="button-text">パスワード変更</text>
+    <rect x="22" y="176" width="296" height="24" rx="7" fill="#64748b"/>
+    <text x="170" y="188" class="button-text">戻る → トップ</text>
+  </g>
+
+  <!-- Password change -->
+  <g transform="translate(85 2160)">
+    <rect width="340" height="280" class="card" stroke="#94a3b8"/>
+    <circle cx="30" cy="31" r="13" fill="#334155"/>
+    <text x="55" y="38" class="card-title">パスワード変更</text>
+    <text x="22" y="65" class="route">/settings/password</text>
+    <text x="22" y="87" class="ui-label">現在のパスワード</text>
+    <rect x="22" y="94" width="296" height="16" rx="4" fill="#e2e8f0"/>
+    <text x="22" y="131" class="ui-label">新しいパスワード</text>
+    <rect x="22" y="138" width="296" height="16" rx="4" fill="#e2e8f0"/>
+    <text x="22" y="175" class="ui-label">新しいパスワード（確認）</text>
+    <rect x="22" y="182" width="296" height="16" rx="4" fill="#e2e8f0"/>
+    <rect x="22" y="210" width="296" height="27" rx="6" fill="#f1f5f9"/>
+    <text x="34" y="228" class="ui-label">8文字以上・変更後は再ログイン</text>
+    <rect x="22" y="246" width="190" height="22" rx="7" fill="#16a34a"/>
+    <rect x="222" y="246" width="96" height="22" rx="7" fill="#64748b"/>
+    <text x="117" y="257" class="button-text">変更する</text>
+    <text x="270" y="257" class="button-text">戻る</text>
   </g>
 
   <!-- Budget-alert menu -->
@@ -578,6 +608,6 @@
   <!-- Footer -->
   <line x1="40" y1="2605" x2="2560" y2="2605" stroke="#cbd5e1" stroke-width="2"/>
   <text x="40" y="2640" class="note">凡例：青実線＝主要操作／灰色破線＝戻る・キャンセル／赤破線＝認証・ログアウト</text>
-  <text x="40" y="2670" class="note">対象：kakeibo-mobile-private-front/src/app および src/components（2026-08-01時点）</text>
+  <text x="40" y="2670" class="note">対象：kakeibo-mobile-private-front/src/app および src/components（2026-08-04時点）</text>
   <text x="2560" y="2670" class="note" text-anchor="end">Generated from implementation</text>
 </svg>
