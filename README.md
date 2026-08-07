@@ -1,5 +1,7 @@
 # 家計簿アプリフロントエンド側
 
+スマートフォン向けの1カラムUIで、入出金、月次資産残高、年次ダッシュボード、予算アラート、固定費を操作するNext.jsアプリです。
+
 ## プロジェクト構成
 
 この家計簿アプリは、フロントエンドとAPIを別々のGitHubリポジトリで管理しています。
@@ -68,13 +70,21 @@ rm -rf .next
 http://localhost:3000
 ```
 
+## 静的検査
+
+```bash
+npm run lint
+```
+
 ---
 
 ## 📦 動作環境
 
-- Next.js v16.2.4
+- Next.js v16.2.10
 - React v19.2.4
 - TypeScript v5.9.3
+- Recharts v3.10.0
+- Tailwind CSS v4.2.3
 - Node.js v20.19.3
 
 ---
@@ -83,3 +93,7 @@ http://localhost:3000
 
 - `.env.local` は Git 管理しません
 - API URL は Laravel 側のポートに合わせて変更してください
+
+## 画面遷移図
+
+現行の全28画面と主要遷移は、[docs/screen-transition-diagram.svg](docs/screen-transition-diagram.svg)を参照してください。
