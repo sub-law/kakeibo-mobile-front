@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { authenticatedFetch } from "@/lib/apiClient";
+import { resolveYearMonth } from "@/utils/date";
 
 interface Balance {
   id: number;
@@ -21,21 +22,12 @@ interface Balance {
   };
 }
 
-function getInitialMonth(requestedMonth: string | null) {
-  const isValidMonth = /^\d{4}-(0[1-9]|1[0-2])$/.test(requestedMonth ?? "");
-  const requestedYear = Number(requestedMonth?.slice(0, 4));
-
-  return isValidMonth && requestedYear >= 1900 && requestedYear <= 2100
-    ? (requestedMonth as string)
-    : new Date().toISOString().slice(0, 7);
-}
-
 function AssetBalanceListContent() {
   const searchParams = useSearchParams();
 
   // ★ 月選択（YYYY-MM）
   const [selectedMonth, setSelectedMonth] = useState(() =>
-    getInitialMonth(searchParams.get("month")),
+    resolveYearMonth(searchParams.get("month")),
   );
 
   const [balances, setBalances] = useState<Balance[]>([]);

@@ -7,7 +7,10 @@ import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { useRouter } from "next/navigation";
-import { authenticatedFetch } from "@/lib/apiClient";
+import {
+  authenticatedFetch,
+  getApiErrorMessage,
+} from "@/lib/apiClient";
 
 export default function IncomeCreatePage() {
   const router = useRouter();
@@ -21,40 +24,56 @@ export default function IncomeCreatePage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setErrors({});
 
-    const res = await authenticatedFetch("/incomes", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date,
-        amount: Number(amount),
-        memo,
-      }),
-    });
+    try {
+      const res = await authenticatedFetch("/incomes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date,
+          amount: Number(amount),
+          memo,
+        }),
+      });
 
-    if (!res) {
-      return;
-    }
+      if (!res) {
+        return;
+      }
 
-    if (res.status === 422) {
-      // ★ バリデーションエラーを受け取る
-      const data = await res.json();
-      setErrors(data.errors);
-      return;
-    }
+      if (res.status === 422) {
+        // ★ バリデーションエラーを受け取る
+        const data = await res.json();
+        setErrors(data.errors);
+        return;
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        setErrors({
+          general: [
+            "入金の登録に失敗しました。時間をおいて再度お試しください。",
+          ],
+        });
+        return;
+      }
+
       setSuccessMessage("登録しました");
-
       // 1秒後にメッセージを消す
       setTimeout(() => {
         setSuccessMessage("");
         router.push("/incomes/list");
       }, 1000);
-    } else {
-      alert("登録に失敗しました");
+    } catch (error) {
+      setErrors({
+        general: [
+          getApiErrorMessage(
+            error,
+            "入金の登録に失敗しました。時間をおいて再度お試しください。",
+          ),
+        ],
+      });
     }
   };
 
@@ -69,6 +88,12 @@ export default function IncomeCreatePage() {
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
           <h1 className="text-2xl font-bold mb-4">入金入力</h1>
+
+          {errors.general && (
+            <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
+              {errors.general[0]}
+            </p>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* 日付 */}

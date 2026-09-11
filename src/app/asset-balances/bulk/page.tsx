@@ -6,7 +6,11 @@ import ClientLayout from "@/components/ClientLayout";
 import { useRouter } from "next/navigation";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
-import { authenticatedFetch } from "@/lib/apiClient";
+import {
+  authenticatedFetch,
+  getApiErrorMessage,
+} from "@/lib/apiClient";
+import { formatJstYearMonth } from "@/utils/date";
 
 interface Account {
   id: number;
@@ -27,10 +31,11 @@ export default function AssetBalanceBulkPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [accountError, setAccountError] = useState("");
   const [balanceError, setBalanceError] = useState("");
+  const [submitError, setSubmitError] = useState("");
   const [balanceLoading, setBalanceLoading] = useState(true);
 
-  const [selectedMonth, setSelectedMonth] = useState(
-    new Date().toISOString().slice(0, 7),
+  const [selectedMonth, setSelectedMonth] = useState(() =>
+    formatJstYearMonth(),
   );
 
   const fixedDate = `${selectedMonth}-01`;
@@ -133,6 +138,7 @@ export default function AssetBalanceBulkPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError("");
 
     const payload = {
       date: fixedDate,
@@ -142,27 +148,38 @@ export default function AssetBalanceBulkPage() {
       })),
     };
 
-    const res = await authenticatedFetch("/asset-balances/bulk", {
+    try {
+      const res = await authenticatedFetch("/asset-balances/bulk", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
-    });
+      });
 
-    if (!res) {
-      return;
-    }
+      if (!res) {
+        return;
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        setSubmitError(
+          "月次残高の登録に失敗しました。入力内容を確認して再度お試しください。",
+        );
+        return;
+      }
+
       setSuccessMessage("月次残高を登録しました（上書き含む）");
-
       setTimeout(() => {
         setSuccessMessage("");
         router.push("/asset-balances/list");
       }, 1000);
-    } else {
-      alert("登録に失敗しました");
+    } catch (error) {
+      setSubmitError(
+        getApiErrorMessage(
+          error,
+          "月次残高の登録に失敗しました。時間をおいて再度お試しください。",
+        ),
+      );
     }
   };
 
@@ -214,6 +231,12 @@ export default function AssetBalanceBulkPage() {
           {accountError && (
             <p className="mb-4 p-2 text-red-700 bg-red-100 border border-red-300 rounded text-center">
               {accountError}
+            </p>
+          )}
+
+          {submitError && (
+            <p className="mb-4 p-2 text-red-700 bg-red-100 border border-red-300 rounded text-center">
+              {submitError}
             </p>
           )}
 

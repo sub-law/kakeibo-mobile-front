@@ -22,6 +22,8 @@ export default function Header() {
           method: "POST",
         });
       }
+    } catch {
+      // 通信できない場合もローカルのログアウト処理を続行する
     } finally {
       if (logout) {
         logout(); // ← 状態を更新
