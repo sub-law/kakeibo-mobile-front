@@ -6,7 +6,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Button from "@/components/ui/Button";
-import { AUTH_REDIRECT_MESSAGE_KEY } from "@/lib/apiClient";
+import {
+  API_CONNECTION_ERROR_MESSAGE,
+  AUTH_REDIRECT_MESSAGE_KEY,
+} from "@/lib/apiClient";
 
 export default function LoginPage() {
   const auth = useAuth();
@@ -95,7 +98,7 @@ export default function LoginPage() {
       auth?.login(data.token);
       router.push("/");
     } catch {
-      setErrors({ general: "ログイン処理でエラーが発生しました。" });
+      setErrors({ general: API_CONNECTION_ERROR_MESSAGE });
     }
   };
 

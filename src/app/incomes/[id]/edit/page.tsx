@@ -6,7 +6,10 @@ import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { useRouter, useParams } from "next/navigation";
-import { authenticatedFetch } from "@/lib/apiClient";
+import {
+  authenticatedFetch,
+  getApiErrorMessage,
+} from "@/lib/apiClient";
 
 export default function IncomeEditPage() {
   const router = useRouter();
@@ -58,40 +61,53 @@ export default function IncomeEditPage() {
     e.preventDefault();
     setErrors({});
 
-    const res = await authenticatedFetch(`/incomes/${id}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date,
-        amount: Number(amount),
-        memo,
-      }),
-    });
+    try {
+      const res = await authenticatedFetch(`/incomes/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date,
+          amount: Number(amount),
+          memo,
+        }),
+      });
 
-    if (!res) {
-      return;
-    }
+      if (!res) {
+        return;
+      }
 
-    if (res.status === 422) {
-      const data = await res.json();
-      setErrors(data.errors);
-      return;
-    }
+      if (res.status === 422) {
+        const data = await res.json();
+        setErrors(data.errors);
+        return;
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        setErrors({
+          general: [
+            "入金の更新に失敗しました。時間をおいて再度お試しください。",
+          ],
+        });
+        return;
+      }
+
       setSuccessMessage("修正しました");
-
       // 2秒後にメッセージを消す
       setTimeout(() => {
         setSuccessMessage("");
         router.push(`/incomes/list`);
       }, 1000);
-
-      return;
-    } else {
-      alert("更新に失敗しました");
+    } catch (error) {
+      setErrors({
+        general: [
+          getApiErrorMessage(
+            error,
+            "入金の更新に失敗しました。時間をおいて再度お試しください。",
+          ),
+        ],
+      });
     }
   };
 
@@ -110,6 +126,12 @@ export default function IncomeEditPage() {
           {fetchError && (
             <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
               {fetchError}
+            </p>
+          )}
+
+          {errors.general && (
+            <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
+              {errors.general[0]}
             </p>
           )}
 

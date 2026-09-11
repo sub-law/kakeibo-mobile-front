@@ -7,7 +7,10 @@ import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { useRouter } from "next/navigation";
-import { authenticatedFetch } from "@/lib/apiClient";
+import {
+  authenticatedFetch,
+  getApiErrorMessage,
+} from "@/lib/apiClient";
 
 interface CategoryGroup {
   id: number;
@@ -58,34 +61,50 @@ export default function ExpenseCreatePage() {
     e.preventDefault();
     setErrors({});
 
-    const res = await authenticatedFetch("/expenses", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        date,
-        amount: Number(amount),
-        memo,
-        category_id: categoryId,
-      }),
-    });
+    try {
+      const res = await authenticatedFetch("/expenses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          date,
+          amount: Number(amount),
+          memo,
+          category_id: categoryId,
+        }),
+      });
 
-    if (!res) {
-      return;
-    }
+      if (!res) {
+        return;
+      }
 
-    if (res.status === 422) {
-      const data = await res.json();
-      setErrors(data.errors);
-      return;
-    }
+      if (res.status === 422) {
+        const data = await res.json();
+        setErrors(data.errors);
+        return;
+      }
 
-    if (res.ok) {
+      if (!res.ok) {
+        setErrors({
+          general: [
+            "出金の登録に失敗しました。時間をおいて再度お試しください。",
+          ],
+        });
+        return;
+      }
+
       sessionStorage.setItem("expenseSuccessMessage", "登録しました");
       router.push("/expenses/category-summary");
-    } else {
-      alert("登録に失敗しました");
+    } catch (error) {
+      setErrors({
+        general: [
+          getApiErrorMessage(
+            error,
+            "出金の登録に失敗しました。時間をおいて再度お試しください。",
+          ),
+        ],
+      });
     }
   };
 
@@ -98,6 +117,12 @@ export default function ExpenseCreatePage() {
           {categoryFetchError && (
             <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
               {categoryFetchError}
+            </p>
+          )}
+
+          {errors.general && (
+            <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
+              {errors.general[0]}
             </p>
           )}
 
