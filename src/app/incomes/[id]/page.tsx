@@ -7,7 +7,10 @@ import ModalConfirmDelete from "@/components/ModalConfirmDelete";
 import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
-import { authenticatedFetch } from "@/lib/apiClient";
+import {
+  authenticatedFetch,
+  getApiErrorMessage,
+} from "@/lib/apiClient";
 
 interface Income {
   id: number;
@@ -28,6 +31,7 @@ export default function IncomeDetailPage() {
   const [income, setIncome] = useState<Income | null>(null);
   const [open, setOpen] = useState(false);
   const [fetchError, setFetchError] = useState("");
+  const [deleteError, setDeleteError] = useState("");
 
   useEffect(() => {
     const fetchIncome = async () => {
@@ -68,22 +72,36 @@ export default function IncomeDetailPage() {
   }
 
   const handleDelete = async () => {
-    const res = await authenticatedFetch(`/incomes/${income.id}`, {
-      method: "DELETE",
-    });
+    setDeleteError("");
 
-    if (!res) {
-      return;
-    }
+    try {
+      const res = await authenticatedFetch(`/incomes/${income.id}`, {
+        method: "DELETE",
+      });
 
-    if (res.ok) {
+      if (!res) {
+        return;
+      }
+
+      if (!res.ok) {
+        setDeleteError(
+          "入金の削除に失敗しました。時間をおいて再度お試しください。",
+        );
+        return;
+      }
+
       // 削除成功 → 一覧へ
       router.push("/incomes/list");
-    } else {
-      alert("削除に失敗しました");
+    } catch (error) {
+      setDeleteError(
+        getApiErrorMessage(
+          error,
+          "入金の削除に失敗しました。時間をおいて再度お試しください。",
+        ),
+      );
+    } finally {
+      setOpen(false);
     }
-
-    setOpen(false);
   };
 
   return (
@@ -91,6 +109,12 @@ export default function IncomeDetailPage() {
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
           <h1 className="text-2xl font-bold mb-4">入金詳細</h1>
+
+          {deleteError && (
+            <p className="mb-4 rounded border border-red-300 bg-red-100 p-3 text-sm text-red-700">
+              {deleteError}
+            </p>
+          )}
 
           {/* 日付・金額 */}
           <div className="flex justify-between items-center border-b pb-3 mb-4">
