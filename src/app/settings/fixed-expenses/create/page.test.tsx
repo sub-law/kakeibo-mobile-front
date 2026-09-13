@@ -1,12 +1,8 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import IncomeCreatePage from "@/app/incomes/create/page";
-import {
-  API_CONNECTION_ERROR_MESSAGE,
-  ApiConnectionError,
-  authenticatedFetch,
-} from "@/lib/apiClient";
+import FixedExpenseCreatePage from "@/app/settings/fixed-expenses/create/page";
+import { authenticatedFetch } from "@/lib/apiClient";
 
 const { routerPush } = vi.hoisted(() => ({
   routerPush: vi.fn(),
@@ -29,22 +25,10 @@ vi.mock("@/lib/apiClient", async (importOriginal) => {
   };
 });
 
-describe("IncomeCreatePage", () => {
+describe("FixedExpenseCreatePage", () => {
   afterEach(() => {
     vi.mocked(authenticatedFetch).mockReset();
     routerPush.mockReset();
-  });
-
-  it("通信に失敗した場合は安全な日本語メッセージを表示する", async () => {
-    vi.mocked(authenticatedFetch).mockRejectedValue(new ApiConnectionError());
-
-    render(<IncomeCreatePage />);
-    fireEvent.click(screen.getByRole("button", { name: "登録する" }));
-
-    expect(await screen.findByText(API_CONNECTION_ERROR_MESSAGE))
-      .toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "登録する" })).toBeEnabled();
-    expect(routerPush).not.toHaveBeenCalled();
   });
 
   it("送信中の重複登録を防ぐ", () => {
@@ -52,7 +36,7 @@ describe("IncomeCreatePage", () => {
       () => new Promise<Response | null>(() => undefined),
     );
 
-    render(<IncomeCreatePage />);
+    render(<FixedExpenseCreatePage />);
     const submitButton = screen.getByRole("button", { name: "登録する" });
     const form = submitButton.closest("form");
 
@@ -60,7 +44,11 @@ describe("IncomeCreatePage", () => {
     fireEvent.submit(form!);
     fireEvent.submit(form!);
 
-    expect(authenticatedFetch).toHaveBeenCalledOnce();
+    const submissionCalls = vi
+      .mocked(authenticatedFetch)
+      .mock.calls.filter(([path]) => path === "/fixed-expenses");
+
+    expect(submissionCalls).toHaveLength(1);
     expect(submitButton).toBeDisabled();
     expect(submitButton).toHaveTextContent("登録中...");
   });

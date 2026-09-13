@@ -100,8 +100,11 @@ function ExpenseListContent() {
 
   // ★ 支出一覧取得（年・月で再取得）
   useEffect(() => {
+    let cancelled = false;
+
     const fetchExpenses = async () => {
       setExpenseFetchError("");
+      setExpenses([]);
 
       try {
         const res = await authenticatedFetch(
@@ -117,15 +120,24 @@ function ExpenseListContent() {
         }
 
         const data: Expense[] = await res.json();
-        setExpenses(data);
+
+        if (!cancelled) {
+          setExpenses(data);
+        }
       } catch {
-        setExpenseFetchError(
-          "出金一覧の取得に失敗しました。時間をおいて再度お試しください。",
-        );
+        if (!cancelled) {
+          setExpenseFetchError(
+            "出金一覧の取得に失敗しました。時間をおいて再度お試しください。",
+          );
+        }
       }
     };
 
     void fetchExpenses();
+
+    return () => {
+      cancelled = true;
+    };
   }, [year, month]);
 
   // ★ カテゴリ一覧取得（初回のみ）

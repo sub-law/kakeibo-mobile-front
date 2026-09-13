@@ -155,6 +155,9 @@ export default function IncomeEditPage() {
               <label className="block mb-1 font-semibold">入金額</label>
               <input
                 type="number"
+                min="1"
+                max="2147483647"
+                step="1"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="no-number-spinner w-full border p-2 rounded"
@@ -169,6 +172,7 @@ export default function IncomeEditPage() {
               <label className="block mb-1 font-semibold">備考</label>
               <input
                 type="text"
+                maxLength={255}
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
                 className="w-full border p-2 rounded"
