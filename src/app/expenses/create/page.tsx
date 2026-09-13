@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
@@ -29,6 +29,8 @@ export default function ExpenseCreatePage() {
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [errors, setErrors] = useState<{ [key: string]: string[] }>({});
   const [categoryFetchError, setCategoryFetchError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionLocked = useRef(false);
 
   // ★ カテゴリ一覧取得
   useEffect(() => {
@@ -59,7 +61,15 @@ export default function ExpenseCreatePage() {
   // ★ 登録処理
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (submissionLocked.current) {
+      return;
+    }
+
+    submissionLocked.current = true;
+    setIsSubmitting(true);
     setErrors({});
+    let succeeded = false;
 
     try {
       const res = await authenticatedFetch("/expenses", {
@@ -95,6 +105,7 @@ export default function ExpenseCreatePage() {
       }
 
       sessionStorage.setItem("expenseSuccessMessage", "登録しました");
+      succeeded = true;
       router.push("/expenses/category-summary");
     } catch (error) {
       setErrors({
@@ -105,6 +116,11 @@ export default function ExpenseCreatePage() {
           ),
         ],
       });
+    } finally {
+      if (!succeeded) {
+        submissionLocked.current = false;
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -146,6 +162,9 @@ export default function ExpenseCreatePage() {
               <label className="block mb-1 font-semibold">出金額</label>
               <input
                 type="number"
+                min="1"
+                max="2147483647"
+                step="1"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 className="no-number-spinner w-full border p-2 rounded"
@@ -189,6 +208,7 @@ export default function ExpenseCreatePage() {
               <label className="block mb-1 font-semibold">備考</label>
               <input
                 type="text"
+                maxLength={255}
                 value={memo}
                 onChange={(e) => setMemo(e.target.value)}
                 className="w-full border p-2 rounded"
@@ -199,8 +219,8 @@ export default function ExpenseCreatePage() {
               )}
             </div>
 
-            <Button type="submit" variant="success">
-              登録する
+            <Button type="submit" variant="success" disabled={isSubmitting}>
+              {isSubmitting ? "登録中..." : "登録する"}
             </Button>
 
             <ButtonLink href="/expenses" variant="secondary">
