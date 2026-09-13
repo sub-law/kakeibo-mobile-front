@@ -22,8 +22,11 @@ export default function IncomeListPage() {
   const [fetchError, setFetchError] = useState("");
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchIncomes = async () => {
       setFetchError("");
+      setIncomes([]);
 
       try {
         const res = await authenticatedFetch(
@@ -39,15 +42,24 @@ export default function IncomeListPage() {
         }
 
         const data: Income[] = await res.json();
-        setIncomes(data);
+
+        if (!cancelled) {
+          setIncomes(data);
+        }
       } catch {
-        setFetchError(
-          "入金一覧の取得に失敗しました。時間をおいて再度お試しください。",
-        );
+        if (!cancelled) {
+          setFetchError(
+            "入金一覧の取得に失敗しました。時間をおいて再度お試しください。",
+          );
+        }
       }
     };
 
     void fetchIncomes();
+
+    return () => {
+      cancelled = true;
+    };
   }, [year, month]);
 
   const total = incomes.reduce((sum, item) => sum + item.amount, 0);

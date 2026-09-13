@@ -237,7 +237,8 @@ export default function FixedExpenseEditPage() {
                 id="amount"
                 type="number"
                 min="1"
-                max="4294967295"
+                max="2147483647"
+                step="1"
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 className="no-number-spinner w-full rounded border p-2"

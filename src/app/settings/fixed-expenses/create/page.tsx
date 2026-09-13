@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
@@ -27,6 +27,8 @@ export default function FixedExpenseCreatePage() {
   const [errors, setErrors] = useState<Record<string, string[]>>({});
   const [successMessage, setSuccessMessage] = useState("");
   const [requestError, setRequestError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submissionLocked = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -70,8 +72,16 @@ export default function FixedExpenseCreatePage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    if (submissionLocked.current) {
+      return;
+    }
+
+    submissionLocked.current = true;
+    setIsSubmitting(true);
     setErrors({});
     setRequestError("");
+    let succeeded = false;
 
     try {
       const response = await authenticatedFetch(
@@ -105,6 +115,7 @@ export default function FixedExpenseCreatePage() {
       }
 
       setSuccessMessage("月次固定費を登録しました。");
+      succeeded = true;
       setTimeout(() => {
         router.push("/settings/fixed-expenses/list");
       }, 1000);
@@ -112,6 +123,11 @@ export default function FixedExpenseCreatePage() {
       setRequestError(
         "月次固定費の登録に失敗しました。時間をおいて再度お試しください。",
       );
+    } finally {
+      if (!succeeded) {
+        submissionLocked.current = false;
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -160,7 +176,8 @@ export default function FixedExpenseCreatePage() {
                 id="amount"
                 type="number"
                 min="1"
-                max="4294967295"
+                max="2147483647"
+                step="1"
                 value={amount}
                 onChange={(event) => setAmount(event.target.value)}
                 className="no-number-spinner w-full rounded border p-2"
@@ -217,8 +234,8 @@ export default function FixedExpenseCreatePage() {
               <p className="text-sm text-red-600">{errors.is_enabled[0]}</p>
             )}
 
-            <Button type="submit" variant="success">
-              登録する
+            <Button type="submit" variant="success" disabled={isSubmitting}>
+              {isSubmitting ? "登録中..." : "登録する"}
             </Button>
 
             <ButtonLink href="/settings/fixed-expenses" variant="secondary">

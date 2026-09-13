@@ -16,6 +16,7 @@ type Props = {
   full?: boolean;
   onClick?: () => void;
   type?: "button" | "submit";
+  disabled?: boolean;
   className?: string;
 };
 
@@ -26,6 +27,7 @@ export default function Button({
   full = true,
   onClick,
   type = "button",
+  disabled = false,
   className,
 }: Props) {
   const base = "rounded";
@@ -49,11 +51,13 @@ export default function Button({
     <button
       type={type}
       onClick={onClick}
+      disabled={disabled}
       className={clsx(
         base,
         sizes[size],
         styles[variant],
         full && "w-full",
+        disabled && "cursor-not-allowed opacity-50",
         className,
       )}
     >
