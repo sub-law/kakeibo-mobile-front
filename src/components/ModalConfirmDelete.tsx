@@ -24,7 +24,7 @@ export default function ModalConfirmDelete({
 
         <div className="flex gap-3">
           <Button
-            variant="muted"
+            variant="secondary"
             full={false}
             className="flex-1"
             onClick={onClose}

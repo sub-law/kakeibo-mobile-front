@@ -127,7 +127,7 @@ export default function IncomeListPage() {
                   </p>
                 </div>
 
-                <ButtonLink
+                <ButtonLink variant="navigation"
                   href={`/incomes/${item.id}`}
                   size="compact"
                   full={false}
@@ -137,7 +137,7 @@ export default function IncomeListPage() {
                 </ButtonLink>
               </div>
             ))}
-            <ButtonLink href="/incomes/create">
+            <ButtonLink variant="navigation" href="/incomes/create">
               入金入力
             </ButtonLink>
             <ButtonLink href="/incomes" variant="secondary">

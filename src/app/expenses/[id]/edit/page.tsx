@@ -17,6 +17,23 @@ interface CategoryGroup {
   categories: { id: number; name: string }[];
 }
 
+function getExpenseListHref(date: string) {
+  const match = /^(\d{4})-(\d{2})-\d{2}$/.exec(date);
+
+  if (!match) {
+    return "/expenses/list";
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+
+  if (year < 1900 || year > 2100 || month < 1 || month > 12) {
+    return "/expenses/list";
+  }
+
+  return `/expenses/list?year=${year}&month=${month}`;
+}
+
 export default function ExpenseEditPage() {
   const router = useRouter();
   const params = useParams();
@@ -120,7 +137,7 @@ export default function ExpenseEditPage() {
       setSuccessMessage("修正しました");
       setTimeout(() => {
         setSuccessMessage("");
-        router.push(`/expenses/list`);
+        router.push(getExpenseListHref(date));
       }, 1000);
     } catch (error) {
       setErrors({

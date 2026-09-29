@@ -14,12 +14,12 @@ export default function AssetMenuPage() {
 
           <div className="space-y-4">
             {/* ★ 新しい月次残高一括入力 */}
-            <ButtonLink href="/asset-balances/bulk">
+            <ButtonLink variant="navigation" href="/asset-balances/bulk">
               月次残高入力・修正
             </ButtonLink>
 
             {/* ★ 月次一覧 */}
-            <ButtonLink href="/asset-balances/list" variant="success">
+            <ButtonLink href="/asset-balances/list" variant="navigation">
               月次残高一覧
             </ButtonLink>
 

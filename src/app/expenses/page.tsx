@@ -13,19 +13,19 @@ export default function ExpenseMenuPage() {
           <h1 className="text-2xl font-bold mb-4">出金メニュー</h1>
 
           <div className="space-y-4">
-            <ButtonLink href="/expenses/create">
+            <ButtonLink variant="navigation" href="/expenses/create">
               出金入力
             </ButtonLink>
 
-            <ButtonLink href="/expenses/list" variant="success">
+            <ButtonLink href="/expenses/list" variant="navigation">
               出金一覧
             </ButtonLink>
 
-            <ButtonLink href="/expenses/category-summary" variant="info">
+            <ButtonLink href="/expenses/category-summary" variant="navigation">
               出金一覧（カテゴリ別）
             </ButtonLink>
 
-            <ButtonLink href="/settings/fixed-expenses" variant="info">
+            <ButtonLink href="/settings/fixed-expenses" variant="navigation">
               月次固定費設定
             </ButtonLink>
 

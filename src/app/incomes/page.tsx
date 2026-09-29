@@ -14,11 +14,11 @@ export default function IncomeMenuPage() {
           <h1 className="text-2xl font-bold mb-4">入金メニュー</h1>
 
           <div className="space-y-4">
-            <ButtonLink href="/incomes/create">
+            <ButtonLink variant="navigation" href="/incomes/create">
               入金入力
             </ButtonLink>
 
-            <ButtonLink href="/incomes/list" variant="success">
+            <ButtonLink href="/incomes/list" variant="navigation">
               入金一覧
             </ButtonLink>
 
