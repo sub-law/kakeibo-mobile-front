@@ -41,7 +41,7 @@ export default function Header() {
 
         {isLoggedIn && (
           <Button
-            variant="danger"
+            variant="secondary"
             full={false}
             className="px-4"
             onClick={handleLogout}

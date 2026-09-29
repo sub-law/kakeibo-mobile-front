@@ -268,7 +268,7 @@ export default function AssetBalanceBulkPage() {
                 </div>
               ))}
 
-              <Button type="submit" variant="success">
+              <Button type="submit" variant="primary">
                 一括登録する
               </Button>
             </form>

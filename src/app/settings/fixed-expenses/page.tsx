@@ -25,17 +25,17 @@ export default function FixedExpensesPage() {
           <h1 className="mb-4 text-2xl font-bold">月次固定費設定</h1>
 
           <div className="space-y-4">
-            <ButtonLink href="/settings/fixed-expenses/create">
+            <ButtonLink variant="navigation" href="/settings/fixed-expenses/create">
               月次固定費登録
             </ButtonLink>
 
-            <ButtonLink href="/settings/fixed-expenses/list" variant="info">
+            <ButtonLink href="/settings/fixed-expenses/list" variant="navigation">
               月次固定費一覧・修正
             </ButtonLink>
 
             <ButtonLink
               href={`/settings/fixed-expenses/process/confirm?target_month=${targetMonth}`}
-              variant="success"
+              variant="navigation"
             >
               当月分の出金処理を確認
             </ButtonLink>

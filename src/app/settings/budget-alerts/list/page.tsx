@@ -154,7 +154,7 @@ export default function BudgetAlertListPage() {
                     </div>
 
                     <div className="flex shrink-0 flex-col gap-2">
-                      <ButtonLink
+                      <ButtonLink variant="navigation"
                         href={`/settings/budget-alerts/${setting.id}/edit`}
                         size="compact"
                         full={false}
@@ -178,7 +178,7 @@ export default function BudgetAlertListPage() {
 
           <ButtonLink
             href="/settings/budget-alerts/create"
-            variant="success"
+            variant="navigation"
             className="mt-4"
           >
             アラート設定を追加

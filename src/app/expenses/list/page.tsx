@@ -34,6 +34,8 @@ interface CategoryGroup {
   }[];
 }
 
+type SortOrder = "desc" | "asc";
+
 function getInitialYearMonth(
   requestedYear: string | null,
   requestedMonth: string | null,
@@ -82,6 +84,7 @@ function ExpenseListContent() {
 
   const [year, setYear] = useState(initialYearMonth.year);
   const [month, setMonth] = useState(initialYearMonth.month);
+  const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
 
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
@@ -182,6 +185,15 @@ function ExpenseListContent() {
       (item) => item.category_id === categoryId,
     );
   }
+
+  const sortDirection = sortOrder === "asc" ? 1 : -1;
+  const sortedExpenses = [...filteredExpenses].sort((first, second) => {
+    const dateOrder = first.date.localeCompare(second.date);
+
+    return dateOrder !== 0
+      ? dateOrder * sortDirection
+      : (first.id - second.id) * sortDirection;
+  });
 
   const total = filteredExpenses.reduce((sum, item) => sum + item.amount, 0);
 
@@ -288,6 +300,36 @@ function ExpenseListContent() {
             合計：{total.toLocaleString()} 円
           </div>
 
+          <div className="mb-4">
+            <p className="mb-2 text-sm font-semibold text-gray-700">並び順</p>
+            <div
+              className="flex gap-2"
+              role="group"
+              aria-label="出金一覧の並び順"
+            >
+              <Button
+                variant={sortOrder === "desc" ? "primary" : "navigation"}
+                size="compact"
+                full={false}
+                className="flex-1"
+                aria-pressed={sortOrder === "desc"}
+                onClick={() => setSortOrder("desc")}
+              >
+                新しい順（降順）
+              </Button>
+              <Button
+                variant={sortOrder === "asc" ? "primary" : "navigation"}
+                size="compact"
+                full={false}
+                className="flex-1"
+                aria-pressed={sortOrder === "asc"}
+                onClick={() => setSortOrder("asc")}
+              >
+                古い順（昇順）
+              </Button>
+            </div>
+          </div>
+
           {(expenseFetchError || categoryFetchError) && (
             <div className="mb-4 space-y-2">
               {expenseFetchError && (
@@ -305,7 +347,7 @@ function ExpenseListContent() {
 
           {/* 一覧 */}
           <div className="space-y-3">
-            {filteredExpenses.map((item) => (
+            {sortedExpenses.map((item) => (
               <div
                 key={item.id}
                 className="border-b pb-2 flex justify-between items-center"
@@ -322,6 +364,7 @@ function ExpenseListContent() {
 
                 <ButtonLink
                   href={`/expenses/${item.id}`}
+                  variant="navigation"
                   size="compact"
                   full={false}
                 >
@@ -329,10 +372,13 @@ function ExpenseListContent() {
                 </ButtonLink>
               </div>
             ))}
-            <ButtonLink href="/expenses/create">
+            <ButtonLink variant="navigation" href="/expenses/create">
               出金入力
             </ButtonLink>
-            <ButtonLink href="/expenses" variant="secondary">
+            <ButtonLink
+              href={`/expenses/category-summary?year=${year}&month=${month}`}
+              variant="secondary"
+            >
               戻る
             </ButtonLink>
           </div>

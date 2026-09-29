@@ -3,18 +3,19 @@
 
 import Link from "next/link";
 import clsx from "clsx";
+import {
+  buttonBase,
+  buttonSizes,
+  buttonVariants,
+  type ButtonSize,
+  type ButtonVariant,
+} from "./buttonStyles";
 
 type Props = {
   href: string;
   children: React.ReactNode;
-  variant?:
-    | "primary"
-    | "success"
-    | "info"
-    | "danger"
-    | "secondary"
-    | "dark";
-  size?: "default" | "compact";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   full?: boolean;
   className?: string;
 };
@@ -22,34 +23,19 @@ type Props = {
 export default function ButtonLink({
   href,
   children,
-  variant = "primary",
+  variant = "navigation",
   size = "default",
   full = true,
   className,
 }: Props) {
-  const base = "rounded text-center font-medium block";
-
-  const sizes = {
-    default: "py-2",
-    compact: "px-3 py-1",
-  };
-
-  const styles = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
-    success: "bg-green-600 text-white hover:bg-green-700",
-    info: "bg-blue-600 text-white hover:bg-blue-700",
-    danger: "bg-red-600 text-white hover:bg-red-700",
-    secondary: "bg-gray-500 text-white hover:bg-gray-600",
-    dark: "bg-gray-700 text-white hover:bg-gray-800",
-  };
-
   return (
     <Link
       href={href}
       className={clsx(
-        base,
-        sizes[size],
-        styles[variant],
+        buttonBase,
+        "block",
+        buttonSizes[size],
+        buttonVariants[variant],
         full && "w-full",
         className,
       )}

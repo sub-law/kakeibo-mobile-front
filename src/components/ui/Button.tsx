@@ -2,22 +2,24 @@
 "use client";
 
 import clsx from "clsx";
+import {
+  buttonBase,
+  buttonSizes,
+  buttonVariants,
+  type ButtonSize,
+  type ButtonVariant,
+} from "./buttonStyles";
 
 type Props = {
   children: React.ReactNode;
-  variant?:
-    | "primary"
-    | "success"
-    | "danger"
-    | "secondary"
-    | "muted"
-    | "navigation";
-  size?: "default" | "compact";
+  variant?: ButtonVariant;
+  size?: ButtonSize;
   full?: boolean;
   onClick?: () => void;
   type?: "button" | "submit";
   disabled?: boolean;
   className?: string;
+  "aria-pressed"?: boolean;
 };
 
 export default function Button({
@@ -29,33 +31,18 @@ export default function Button({
   type = "button",
   disabled = false,
   className,
+  "aria-pressed": ariaPressed,
 }: Props) {
-  const base = "rounded";
-
-  const sizes = {
-    default: "py-2",
-    compact: "px-3 py-1",
-  };
-
-  const styles = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-700",
-    success:
-      "bg-green-600 text-white hover:bg-green-700 transition-colors duration-200",
-    danger: "bg-red-600 text-white hover:bg-red-700",
-    secondary: "bg-gray-500 text-white hover:bg-gray-600",
-    muted: "bg-gray-300 hover:bg-gray-400 transition",
-    navigation: "bg-gray-200 hover:bg-gray-300",
-  };
-
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
+      aria-pressed={ariaPressed}
       className={clsx(
-        base,
-        sizes[size],
-        styles[variant],
+        buttonBase,
+        buttonSizes[size],
+        buttonVariants[variant],
         full && "w-full",
         disabled && "cursor-not-allowed opacity-50",
         className,

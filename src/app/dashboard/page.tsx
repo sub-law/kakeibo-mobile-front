@@ -427,7 +427,7 @@ export default function DashboardPage() {
                           <span className="font-bold text-gray-900">
                             {formatCurrency(item.assets)}
                           </span>
-                          <ButtonLink
+                          <ButtonLink variant="navigation"
                             href={getAssetBalancesHref(item.month)}
                             size="compact"
                             full={false}
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                               入金：{formatCurrency(item.income)}
                             </p>
                           </div>
-                          <ButtonLink
+                          <ButtonLink variant="navigation"
                             href={getCashflowHref(item.month)}
                             size="compact"
                             full={false}

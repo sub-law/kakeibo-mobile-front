@@ -264,7 +264,7 @@ function CashflowContent() {
                               {isExpense ? "-" : "+"}
                               {formatCurrency(item.amount)}
                             </p>
-                            <ButtonLink
+                            <ButtonLink variant="navigation"
                               href={`/${isExpense ? "expenses" : "incomes"}/${item.id}`}
                               size="compact"
                               full={false}

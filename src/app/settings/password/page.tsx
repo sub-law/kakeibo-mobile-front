@@ -147,7 +147,7 @@ export default function PasswordSettingsPage() {
               パスワードは8文字以上で設定してください。変更後は再度ログインが必要です。
             </p>
 
-            <Button type="submit" variant="success">
+            <Button type="submit" variant="primary">
               変更する
             </Button>
 
