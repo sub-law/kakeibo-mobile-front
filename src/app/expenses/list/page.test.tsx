@@ -63,13 +63,14 @@ function expense(id: number, date: string, amount: number) {
 describe("ExpenseListPage", () => {
   beforeEach(() => {
     navigationMocks.searchParams = new URLSearchParams();
+    sessionStorage.clear();
   });
 
   afterEach(() => {
     vi.mocked(authenticatedFetch).mockReset();
   });
 
-  it("戻るリンクに表示中の年月を引き継ぐ", () => {
+  it("戻るリンクで出金メニューへ遷移する", () => {
     navigationMocks.searchParams = new URLSearchParams({
       year: "2025",
       month: "12",
@@ -80,17 +81,42 @@ describe("ExpenseListPage", () => {
 
     render(<ExpenseListPage />);
 
-    expect(screen.getByRole("link", { name: "戻る" })).toHaveAttribute(
-      "href",
-      "/expenses/category-summary?year=2025&month=12",
-    );
+    expect(
+      screen.getByRole("link", { name: "出金メニューへ戻る" }),
+    ).toHaveAttribute("href", "/expenses");
 
     fireEvent.click(screen.getByRole("button", { name: "→" }));
 
-    expect(screen.getByRole("link", { name: "戻る" })).toHaveAttribute(
-      "href",
-      "/expenses/category-summary?year=2026&month=1",
+    expect(
+      screen.getByRole("link", { name: "出金メニューへ戻る" }),
+    ).toHaveAttribute("href", "/expenses");
+  });
+
+  it("出金登録直後だけ出金入力を続けるリンクを表示する", async () => {
+    sessionStorage.setItem("expenseSuccessMessage", "登録しました");
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(jsonResponse([])),
     );
+
+    render(<ExpenseListPage />);
+
+    expect(
+      await screen.findByRole("link", { name: "出金入力を続ける" }),
+    ).toHaveAttribute("href", "/expenses/create");
+    expect(screen.getByText("登録しました")).toBeInTheDocument();
+    expect(sessionStorage.getItem("expenseSuccessMessage")).toBeNull();
+  });
+
+  it("通常遷移では出金入力を続けるリンクを表示しない", () => {
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(jsonResponse([])),
+    );
+
+    render(<ExpenseListPage />);
+
+    expect(
+      screen.queryByRole("link", { name: "出金入力を続ける" }),
+    ).not.toBeInTheDocument();
   });
 
   it("新しい順を初期表示し、古い順へ切り替える", async () => {

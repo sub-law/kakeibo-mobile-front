@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import ExpenseCreatePage from "@/app/expenses/create/page";
@@ -29,6 +29,7 @@ describe("ExpenseCreatePage", () => {
   afterEach(() => {
     vi.mocked(authenticatedFetch).mockReset();
     routerPush.mockReset();
+    sessionStorage.clear();
   });
 
   it("送信中の重複登録を防ぐ", () => {
@@ -51,5 +52,21 @@ describe("ExpenseCreatePage", () => {
     expect(submissionCalls).toHaveLength(1);
     expect(submitButton).toBeDisabled();
     expect(submitButton).toHaveTextContent("登録中...");
+  });
+
+  it("登録成功後に出金一覧へ遷移する", async () => {
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(new Response(null, { status: 201 })),
+    );
+
+    render(<ExpenseCreatePage />);
+    fireEvent.submit(screen.getByRole("button", { name: "登録する" }));
+
+    await waitFor(() => {
+      expect(routerPush).toHaveBeenCalledWith("/expenses/list");
+    });
+    expect(sessionStorage.getItem("expenseSuccessMessage")).toBe(
+      "登録しました",
+    );
   });
 });

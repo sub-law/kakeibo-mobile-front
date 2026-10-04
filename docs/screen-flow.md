@@ -40,7 +40,7 @@ flowchart TD
     ExpenseMenu --> ExpenseList["出金一覧<br/>/expenses/list"]
     ExpenseMenu --> ExpenseSummary
     ExpenseMenu --> FixedMenu["月次固定費設定<br/>/settings/fixed-expenses"]
-    ExpenseCreate -->|登録成功| ExpenseSummary
+    ExpenseCreate -->|登録成功・続けて入力可能| ExpenseList
     ExpenseSummary -->|年月・大分類を指定| ExpenseList
     ExpenseList --> ExpenseDetail["出金詳細<br/>/expenses/[id]"]
     ExpenseDetail --> ExpenseEdit["出金修正<br/>/expenses/[id]/edit"]
