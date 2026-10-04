@@ -11,11 +11,11 @@ export default function SettingsPage() {
           <h1 className="mb-4 text-2xl font-bold">各種設定</h1>
 
           <div className="space-y-4">
-            <ButtonLink href="/settings/budget-alerts">
+            <ButtonLink variant="navigation" href="/settings/budget-alerts">
               アラート設定
             </ButtonLink>
 
-            <ButtonLink href="/settings/password" variant="dark">
+            <ButtonLink href="/settings/password" variant="navigation">
               パスワード変更
             </ButtonLink>
 

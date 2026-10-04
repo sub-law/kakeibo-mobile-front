@@ -234,7 +234,7 @@ export default function FixedExpenseCreatePage() {
               <p className="text-sm text-red-600">{errors.is_enabled[0]}</p>
             )}
 
-            <Button type="submit" variant="success" disabled={isSubmitting}>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
               {isSubmitting ? "登録中..." : "登録する"}
             </Button>
 

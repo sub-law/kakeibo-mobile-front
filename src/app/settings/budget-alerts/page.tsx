@@ -11,13 +11,13 @@ export default function BudgetAlertsPage() {
           <h1 className="mb-4 text-2xl font-bold">アラート設定</h1>
 
           <div className="space-y-4">
-            <ButtonLink href="/settings/budget-alerts/create">
+            <ButtonLink variant="navigation" href="/settings/budget-alerts/create">
               アラート設定
             </ButtonLink>
 
             <ButtonLink
               href="/settings/budget-alerts/list"
-              variant="info"
+              variant="navigation"
             >
               アラート一覧・修正
             </ButtonLink>

@@ -160,7 +160,7 @@ export default function IncomeCreatePage() {
               )}
             </div>
 
-            <Button type="submit" variant="success" disabled={isSubmitting}>
+            <Button type="submit" variant="primary" disabled={isSubmitting}>
               {isSubmitting ? "登録中..." : "登録する"}
             </Button>
 

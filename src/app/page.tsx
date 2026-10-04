@@ -369,21 +369,21 @@ export default function HomePage() {
           )}
 
           <div className="space-y-4">
-            <ButtonLink href="/expenses">出金メニュー</ButtonLink>
+            <ButtonLink variant="navigation" href="/expenses">出金メニュー</ButtonLink>
 
-            <ButtonLink href="/incomes" variant="success">
+            <ButtonLink href="/incomes" variant="navigation">
               入金メニュー
             </ButtonLink>
 
-            <ButtonLink href="/asset-balances" variant="dark">
+            <ButtonLink href="/asset-balances" variant="navigation">
               資産メニュー
             </ButtonLink>
 
-            <ButtonLink href="/dashboard" variant="info">
+            <ButtonLink href="/dashboard" variant="navigation">
               管理画面
             </ButtonLink>
 
-            <ButtonLink href="/settings" variant="secondary">
+            <ButtonLink href="/settings" variant="navigation">
               各種設定
             </ButtonLink>
           </div>

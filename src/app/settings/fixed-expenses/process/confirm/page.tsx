@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ClientLayout from "@/components/ClientLayout";
+import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { authenticatedFetch } from "@/lib/apiClient";
 
@@ -193,7 +194,7 @@ function FixedExpenseProcessConfirmContent() {
                 </div>
               </dl>
 
-              <ButtonLink href="/expenses/list" variant="info">
+              <ButtonLink href="/expenses/list" variant="navigation">
                 出金一覧を確認
               </ButtonLink>
               <ButtonLink
@@ -251,14 +252,12 @@ function FixedExpenseProcessConfirmContent() {
                     </p>
                   </div>
 
-                  <button
-                    type="button"
+                  <Button
                     onClick={handleProcess}
                     disabled={processing}
-                    className="w-full rounded bg-green-600 py-2 text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
                   >
                     {processing ? "処理中..." : "出金処理を実行"}
-                  </button>
+                  </Button>
                 </>
               )}
 

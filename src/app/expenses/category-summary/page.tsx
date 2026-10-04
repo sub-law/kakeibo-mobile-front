@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Cell,
   Pie,
@@ -40,11 +40,44 @@ const categoryGroupColors = [
   "#4f46e5",
 ];
 
-export default function ExpenseCategorySummaryPage() {
-  const router = useRouter();
+function getInitialYearMonth(
+  requestedYear: string | null,
+  requestedMonth: string | null,
+) {
+  const year = Number(requestedYear);
+  const month = Number(requestedMonth);
+  const isValidYear =
+    requestedYear !== null &&
+    /^\d{4}$/.test(requestedYear) &&
+    year >= 1900 &&
+    year <= 2100;
+  const isValidMonth =
+    requestedMonth !== null &&
+    /^\d{1,2}$/.test(requestedMonth) &&
+    month >= 1 &&
+    month <= 12;
+
+  if (isValidYear && isValidMonth) {
+    return { year, month };
+  }
+
   const today = new Date();
-  const [year, setYear] = useState(today.getFullYear());
-  const [month, setMonth] = useState(today.getMonth() + 1);
+
+  return {
+    year: today.getFullYear(),
+    month: today.getMonth() + 1,
+  };
+}
+
+function ExpenseCategorySummaryContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initialYearMonth = getInitialYearMonth(
+    searchParams.get("year"),
+    searchParams.get("month"),
+  );
+  const [year, setYear] = useState(initialYearMonth.year);
+  const [month, setMonth] = useState(initialYearMonth.month);
   const [expenses, setExpenses] = useState<Expense[]>([]);
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -318,7 +351,7 @@ export default function ExpenseCategorySummaryPage() {
           )}
 
           <div className="mt-6 space-y-3">
-            <ButtonLink href="/expenses/create">出金入力</ButtonLink>
+            <ButtonLink variant="navigation" href="/expenses/create">出金入力</ButtonLink>
 
             <ButtonLink href="/expenses" variant="secondary">
               出金メニューへ戻る
@@ -327,5 +360,21 @@ export default function ExpenseCategorySummaryPage() {
         </div>
       </main>
     </ClientLayout>
+  );
+}
+
+export default function ExpenseCategorySummaryPage() {
+  return (
+    <Suspense
+      fallback={
+        <ClientLayout>
+          <main className="min-h-screen bg-gray-100 p-6">
+            <p className="text-center text-gray-600">読み込み中...</p>
+          </main>
+        </ClientLayout>
+      }
+    >
+      <ExpenseCategorySummaryContent />
+    </Suspense>
   );
 }

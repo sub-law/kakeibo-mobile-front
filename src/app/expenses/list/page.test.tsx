@@ -1,11 +1,15 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import ExpenseListPage from "@/app/expenses/list/page";
 import { authenticatedFetch } from "@/lib/apiClient";
 
+const navigationMocks = vi.hoisted(() => ({
+  searchParams: new URLSearchParams(),
+}));
+
 vi.mock("next/navigation", () => ({
-  useSearchParams: () => new URLSearchParams(),
+  useSearchParams: () => navigationMocks.searchParams,
 }));
 
 vi.mock("@/components/ClientLayout", () => ({
@@ -57,8 +61,121 @@ function expense(id: number, date: string, amount: number) {
 }
 
 describe("ExpenseListPage", () => {
+  beforeEach(() => {
+    navigationMocks.searchParams = new URLSearchParams();
+    sessionStorage.clear();
+  });
+
   afterEach(() => {
     vi.mocked(authenticatedFetch).mockReset();
+  });
+
+  it("戻るリンクで出金メニューへ遷移する", () => {
+    navigationMocks.searchParams = new URLSearchParams({
+      year: "2025",
+      month: "12",
+    });
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(jsonResponse([])),
+    );
+
+    render(<ExpenseListPage />);
+
+    expect(
+      screen.getByRole("link", { name: "出金メニューへ戻る" }),
+    ).toHaveAttribute("href", "/expenses");
+
+    fireEvent.click(screen.getByRole("button", { name: "→" }));
+
+    expect(
+      screen.getByRole("link", { name: "出金メニューへ戻る" }),
+    ).toHaveAttribute("href", "/expenses");
+  });
+
+  it("出金登録直後だけ出金入力を続けるリンクを表示する", async () => {
+    sessionStorage.setItem("expenseSuccessMessage", "登録しました");
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(jsonResponse([])),
+    );
+
+    render(<ExpenseListPage />);
+
+    expect(
+      await screen.findByRole("link", { name: "出金入力を続ける" }),
+    ).toHaveAttribute("href", "/expenses/create");
+    expect(screen.getByText("登録しました")).toBeInTheDocument();
+    expect(sessionStorage.getItem("expenseSuccessMessage")).toBeNull();
+  });
+
+  it("通常遷移では出金入力を続けるリンクを表示しない", () => {
+    vi.mocked(authenticatedFetch).mockImplementation(() =>
+      Promise.resolve(jsonResponse([])),
+    );
+
+    render(<ExpenseListPage />);
+
+    expect(
+      screen.queryByRole("link", { name: "出金入力を続ける" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("新しい順を初期表示し、古い順へ切り替える", async () => {
+    navigationMocks.searchParams = new URLSearchParams({
+      year: "2025",
+      month: "7",
+    });
+    vi.mocked(authenticatedFetch).mockImplementation((path) => {
+      if (path === "/categories") {
+        return Promise.resolve(jsonResponse([]));
+      }
+
+      if (path.startsWith("/expenses?")) {
+        return Promise.resolve(
+          jsonResponse([
+            expense(1, "2025-07-01", 1000),
+            expense(2, "2025-07-20", 2000),
+            expense(3, "2025-07-20", 3000),
+          ]),
+        );
+      }
+
+      return Promise.resolve(null);
+    });
+
+    render(<ExpenseListPage />);
+
+    await waitFor(() =>
+      expect(screen.getAllByRole("link", { name: "詳細" })).toHaveLength(3),
+    );
+
+    const getDetailHrefs = () =>
+      screen
+        .getAllByRole("link", { name: "詳細" })
+        .map((link) => link.getAttribute("href"));
+    const newestFirstButton = screen.getByRole("button", {
+      name: "新しい順（降順）",
+    });
+    const oldestFirstButton = screen.getByRole("button", {
+      name: "古い順（昇順）",
+    });
+
+    expect(getDetailHrefs()).toEqual([
+      "/expenses/3",
+      "/expenses/2",
+      "/expenses/1",
+    ]);
+    expect(newestFirstButton).toHaveAttribute("aria-pressed", "true");
+    expect(oldestFirstButton).toHaveAttribute("aria-pressed", "false");
+
+    fireEvent.click(oldestFirstButton);
+
+    expect(getDetailHrefs()).toEqual([
+      "/expenses/1",
+      "/expenses/2",
+      "/expenses/3",
+    ]);
+    expect(newestFirstButton).toHaveAttribute("aria-pressed", "false");
+    expect(oldestFirstButton).toHaveAttribute("aria-pressed", "true");
   });
 
   it("年月切替前の遅いレスポンスで現在の一覧を上書きしない", async () => {

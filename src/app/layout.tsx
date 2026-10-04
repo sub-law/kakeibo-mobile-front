@@ -1,11 +1,11 @@
 // src/app/layout.tsx
 import "../styles/globals.css";
 import { AuthProviderWrapper } from "./providers/AuthProviderWrapper";
-import { RocknRoll_One } from "next/font/google";
+import { M_PLUS_Rounded_1c } from "next/font/google";
 
-const rocknRoll = RocknRoll_One({
+const mPlusRounded = M_PLUS_Rounded_1c({
   subsets: ["latin"],
-  weight: ["400"],
+  weight: ["400", "500", "700"],
 });
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ja">
-      <body className={rocknRoll.className}>
+      <body className={mPlusRounded.className}>
         <AuthProviderWrapper>{children}</AuthProviderWrapper>
       </body>
     </html>

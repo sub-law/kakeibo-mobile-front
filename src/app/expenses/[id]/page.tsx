@@ -25,6 +25,23 @@ interface Expense {
   };
 }
 
+function getExpenseListHref(date: string) {
+  const match = /^(\d{4})-(\d{2})-\d{2}$/.exec(date);
+
+  if (!match) {
+    return "/expenses/list";
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+
+  if (year < 1900 || year > 2100 || month < 1 || month > 12) {
+    return "/expenses/list";
+  }
+
+  return `/expenses/list?year=${year}&month=${month}`;
+}
+
 export default function ExpenseDetailPage() {
   const router = useRouter();
   const params = useParams();
@@ -74,6 +91,8 @@ export default function ExpenseDetailPage() {
       </ClientLayout>
     );
   }
+
+  const expenseListHref = getExpenseListHref(expense.date);
 
   const handleDelete = async () => {
     setDeleteError("");
@@ -172,7 +191,7 @@ export default function ExpenseDetailPage() {
           </div>
 
           <ButtonLink
-            href="/expenses/list"
+            href={expenseListHref}
             variant="secondary"
             className="mt-4"
           >

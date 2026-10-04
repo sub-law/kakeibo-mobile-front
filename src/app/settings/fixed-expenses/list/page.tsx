@@ -112,7 +112,7 @@ export default function FixedExpenseListPage() {
                       </p>
                     </div>
 
-                    <ButtonLink
+                    <ButtonLink variant="navigation"
                       href={`/settings/fixed-expenses/${fixedExpense.id}/edit`}
                       size="compact"
                       full={false}
@@ -127,7 +127,7 @@ export default function FixedExpenseListPage() {
 
           <ButtonLink
             href="/settings/fixed-expenses/create"
-            variant="success"
+            variant="navigation"
             className="mt-4"
           >
             月次固定費を追加

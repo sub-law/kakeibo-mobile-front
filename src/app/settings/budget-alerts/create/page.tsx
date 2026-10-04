@@ -241,7 +241,7 @@ export default function BudgetAlertCreatePage() {
               選択した小分類の出金額が設定した割合に達したときと、設定金額に達したときにトップ画面でお知らせします。
             </p>
 
-            <Button type="submit" variant="success">
+            <Button type="submit" variant="primary">
               登録する
             </Button>
 
