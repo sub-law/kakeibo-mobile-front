@@ -100,6 +100,33 @@ function ExpenseListContent() {
   const [categoryGroups, setCategoryGroups] = useState<CategoryGroup[]>([]);
   const [expenseFetchError, setExpenseFetchError] = useState("");
   const [categoryFetchError, setCategoryFetchError] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
+  const [showContinueExpenseInput, setShowContinueExpenseInput] =
+    useState(false);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      const message = sessionStorage.getItem("expenseSuccessMessage");
+
+      if (!message) return;
+
+      sessionStorage.removeItem("expenseSuccessMessage");
+      setSuccessMessage(message);
+      setShowContinueExpenseInput(true);
+    }, 0);
+
+    return () => window.clearTimeout(timeoutId);
+  }, []);
+
+  useEffect(() => {
+    if (!successMessage) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setSuccessMessage("");
+    }, 3000);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [successMessage]);
 
   // ★ 支出一覧取得（年・月で再取得）
   useEffect(() => {
@@ -202,6 +229,23 @@ function ExpenseListContent() {
       <div className="min-h-screen bg-gray-100 p-6">
         <div className="max-w-md mx-auto bg-white p-6 rounded shadow">
           <h1 className="text-2xl font-bold mb-4">出金一覧</h1>
+
+          {successMessage && (
+            <p className="mb-4 rounded border border-green-300 bg-green-100 p-2 text-center text-green-700">
+              {successMessage}
+            </p>
+          )}
+
+          {showContinueExpenseInput && (
+            <ButtonLink
+              variant="primary"
+              href="/expenses/create"
+              className="mb-4"
+            >
+              出金入力を続ける
+            </ButtonLink>
+          )}
+
           {/* フィルタ（横並び） */}
           <div className="mb-4 flex gap-4">
             {/* 大分類 */}
@@ -375,11 +419,8 @@ function ExpenseListContent() {
             <ButtonLink variant="navigation" href="/expenses/create">
               出金入力
             </ButtonLink>
-            <ButtonLink
-              href={`/expenses/category-summary?year=${year}&month=${month}`}
-              variant="secondary"
-            >
-              戻る
+            <ButtonLink href="/expenses" variant="secondary">
+              出金メニューへ戻る
             </ButtonLink>
           </div>
         </div>

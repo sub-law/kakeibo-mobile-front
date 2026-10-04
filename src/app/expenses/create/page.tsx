@@ -7,10 +7,7 @@ import ClientLayout from "@/components/ClientLayout";
 import Button from "@/components/ui/Button";
 import ButtonLink from "@/components/ui/ButtonLink";
 import { useRouter } from "next/navigation";
-import {
-  authenticatedFetch,
-  getApiErrorMessage,
-} from "@/lib/apiClient";
+import { authenticatedFetch, getApiErrorMessage } from "@/lib/apiClient";
 
 interface CategoryGroup {
   id: number;
@@ -106,7 +103,7 @@ export default function ExpenseCreatePage() {
 
       sessionStorage.setItem("expenseSuccessMessage", "登録しました");
       succeeded = true;
-      router.push("/expenses/category-summary");
+      router.push("/expenses/list");
     } catch (error) {
       setErrors({
         general: [
@@ -224,7 +221,7 @@ export default function ExpenseCreatePage() {
             </Button>
 
             <ButtonLink href="/expenses" variant="secondary">
-              戻る
+              出金メニューへ戻る
             </ButtonLink>
           </form>
         </div>
