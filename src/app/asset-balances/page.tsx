@@ -24,7 +24,7 @@ export default function AssetMenuPage() {
             </ButtonLink>
 
             <ButtonLink href="/" variant="secondary">
-              戻る
+              トップへ戻る
             </ButtonLink>
           </div>
         </div>
