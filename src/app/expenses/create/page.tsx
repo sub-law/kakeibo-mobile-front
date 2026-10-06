@@ -103,7 +103,8 @@ export default function ExpenseCreatePage() {
 
       sessionStorage.setItem("expenseSuccessMessage", "登録しました");
       succeeded = true;
-      router.push("/expenses/list");
+      const [year, month] = date.split("-").map(Number);
+      router.push(`/expenses/list?year=${year}&month=${month}`);
     } catch (error) {
       setErrors({
         general: [

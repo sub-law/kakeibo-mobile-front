@@ -54,16 +54,22 @@ describe("ExpenseCreatePage", () => {
     expect(submitButton).toHaveTextContent("登録中...");
   });
 
-  it("登録成功後に出金一覧へ遷移する", async () => {
+  it("過去月の登録成功後にその年月の出金一覧へ遷移する", async () => {
     vi.mocked(authenticatedFetch).mockImplementation(() =>
       Promise.resolve(new Response(null, { status: 201 })),
     );
 
-    render(<ExpenseCreatePage />);
+    const { container } = render(<ExpenseCreatePage />);
+    const dateInput = container.querySelector('input[type="date"]');
+
+    expect(dateInput).not.toBeNull();
+    fireEvent.change(dateInput!, { target: { value: "2025-07-15" } });
     fireEvent.submit(screen.getByRole("button", { name: "登録する" }));
 
     await waitFor(() => {
-      expect(routerPush).toHaveBeenCalledWith("/expenses/list");
+      expect(routerPush).toHaveBeenCalledWith(
+        "/expenses/list?year=2025&month=7",
+      );
     });
     expect(sessionStorage.getItem("expenseSuccessMessage")).toBe(
       "登録しました",
