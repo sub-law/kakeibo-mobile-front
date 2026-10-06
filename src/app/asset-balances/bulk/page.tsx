@@ -32,6 +32,9 @@ export default function AssetBalanceBulkPage() {
   const [accountError, setAccountError] = useState("");
   const [balanceError, setBalanceError] = useState("");
   const [submitError, setSubmitError] = useState("");
+  const [amountErrors, setAmountErrors] = useState<{
+    [key: number]: string;
+  }>({});
   const [balanceLoading, setBalanceLoading] = useState(true);
 
   const [selectedMonth, setSelectedMonth] = useState(() =>
@@ -88,6 +91,7 @@ export default function AssetBalanceBulkPage() {
     const fetchExistingBalances = async () => {
       setBalanceLoading(true);
       setBalanceError("");
+      setAmountErrors({});
 
       const [year, month] = selectedMonth.split("-");
       const monthNumber = Number(month);
@@ -110,7 +114,7 @@ export default function AssetBalanceBulkPage() {
 
         const newAmounts: { [key: number]: string } = {};
         list.forEach((bal: Balance) => {
-          newAmounts[bal.account_id] = String(Math.round(bal.amount));
+          newAmounts[bal.account_id] = String(bal.amount);
         });
 
         if (!cancelled) {
@@ -140,11 +144,36 @@ export default function AssetBalanceBulkPage() {
     e.preventDefault();
     setSubmitError("");
 
+    const validationErrors: { [key: number]: string } = {};
+
+    accounts.forEach((account) => {
+      const amount = amounts[account.id] ?? "";
+
+      if (amount === "") {
+        return;
+      }
+
+      if (amount.startsWith("-")) {
+        validationErrors[account.id] = "金額は0以上で入力してください。";
+      } else if (!/^\d+$/.test(amount)) {
+        validationErrors[account.id] = "金額は整数で入力してください。";
+      } else if (Number(amount) > 2147483647) {
+        validationErrors[account.id] =
+          "金額は2,147,483,647円以下で入力してください。";
+      }
+    });
+
+    setAmountErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     const payload = {
       date: fixedDate,
       balances: accounts.map((acc) => ({
         account_id: acc.id,
-        amount: Math.round(Number(amounts[acc.id] || 0)), // ★ 誤差対策
+        amount: Number(amounts[acc.id] || 0),
       })),
     };
 
@@ -247,7 +276,7 @@ export default function AssetBalanceBulkPage() {
           ) : balanceLoading ? (
             <p>読み込み中...</p>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-4" noValidate>
               {accounts.map((acc) => (
                 <div key={acc.id}>
                   <label className="block mb-1 font-semibold">
@@ -255,16 +284,29 @@ export default function AssetBalanceBulkPage() {
                   </label>
                   <input
                     type="number"
+                    min="0"
+                    max="2147483647"
+                    step="1"
                     value={amounts[acc.id] || ""}
-                    onChange={(e) =>
+                    onChange={(e) => {
                       setAmounts({
                         ...amounts,
-                        [acc.id]: e.target.value.replace(/\D/g, ""), // ★ 数字以外排除
-                      })
-                    }
+                        [acc.id]: e.target.value,
+                      });
+                      setAmountErrors((currentErrors) => {
+                        const nextErrors = { ...currentErrors };
+                        delete nextErrors[acc.id];
+                        return nextErrors;
+                      });
+                    }}
                     className="no-number-spinner w-full border p-2 rounded"
                     placeholder="例: 150,000"
                   />
+                  {amountErrors[acc.id] && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {amountErrors[acc.id]}
+                    </p>
+                  )}
                 </div>
               ))}
 
